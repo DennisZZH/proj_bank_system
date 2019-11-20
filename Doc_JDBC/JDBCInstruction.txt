@@ -1,0 +1,25 @@
+1. the path of JDBC: /usr/lib/oracle/19.3/client64/lib/ojdbc8.jar 
+2. This instruction only works if you compile this source code in CSIL machine.
+Please use the following step to test JDBC:
+==================================================================
+step 1. Download DataSourceSample.java
+step 2. Modify the Java code and Update the Database Credentials of the database that you have access to.
+    a.Change the connect string to use your database's username, password, host name/IP address, database service name, and port number:
+        final static String DB_URL= "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
+    b.final static String DB_USER = "c##Net_ID";
+      final static String DB_PASSWORD = "perm";
+step 3. Compile and run the Java code:
+    javac -classpath /usr/lib/oracle/19.3/client64/lib/ojdbc8.jar:. DataSourceSample.java
+    java -classpath /usr/lib/oracle/19.3/client64/lib/ojdbc8.jar:. DataSourceSample
+step 4. You should see the list of name and table name as following:
+===================================================================
+Driver Name: Oracle JDBC driver
+Driver Version: 19.3.0.0.0
+Default Row Prefetch Value is: 20
+Database Username is: C##yourID
+
+SYS DUAL 
+SYS SYSTEM_PRIVILEGE_MAP 
+SYS TABLE_PRIVILEGE_MAP 
+SYS USER_PRIVILEGE_MAP 
+SYS STMT_AUDIT_OPTION_MAP 
