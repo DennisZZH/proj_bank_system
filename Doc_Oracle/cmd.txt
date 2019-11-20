@@ -1,0 +1,9 @@
+CREATE TABLE Customers(tax_id INTEGER, name CHAR(20),address CHAR(40),PIN INTEGER, PRIMARY KEY(tax_id));
+
+CREATE TABLE Accounts(account_id INTEGER, branch_name CHAR(20), account_type CHAR(20), rate REAL, PRIMARY KEY(account_id));
+
+CREATE TABLE Transactions(transaction_id INTEGER, type CHAR(20), time DATE, amount REAL, PRIMARY KEY(transaction_id));
+
+CREATE TABLE Generate(tax_id INTEGER, transaction_id INTEGER, account_id_one INTEGER, account_id_two INTEGER, PRIMARY KEY(tax_id,transaction_id,account_id_one), FOREIGN KEY(tax_id)REFERENCES Customers, FOREIGN KEY(transaction_id)REFERENCES Transactions, FOREIGN KEY(account_id_one)REFERENCES Accounts);
+
+CREATE TABLE Own(tax_id INTEGER, account_id INTEGER, isprimary INTEGER, PRIMARY KEY(tax_id,account_id), FOREIGN KEY(tax_id)REFERENCES Customers, FOREIGN KEY(account_id)REFERENCES Accounts);
