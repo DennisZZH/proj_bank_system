@@ -21,7 +21,7 @@
    MODIFIED    (MM/DD/YY)
     nbsundar    02/17/15 - Creation 
  */
-
+package cs174a;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -42,8 +42,8 @@ public class DataSourceSample {
   // final static String DB_URL="jdbc:oracle:thin:@wallet_dbname?TNS_ADMIN=/Users/test/wallet_dbname";
   // In case of windows, use the following URL 
   // final static String DB_URL="jdbc:oracle:thin:@wallet_dbname?TNS_ADMIN=C:\\Users\\test\\wallet_dbname";
-  final static String DB_USER = "c##zihaozhang";
-  final static String DB_PASSWORD = "8862062";
+  final static String DB_USER = "c##yourUCSBID";
+  final static String DB_PASSWORD = "Your_perm";
 
  /*
   * The method gets a database connection using 
