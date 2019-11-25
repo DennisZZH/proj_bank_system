@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Customers{
 
-private String id;
+private int tax_id;
 private String name;
 private String address;
 private String pin= "1717";
@@ -22,8 +22,8 @@ public Customers(){
         // Default Constructor
 }
 
-public Customers(String id, String name, String address){
-        this.id=id;
+public Customers(int id, String name, String address){
+        this.tax_id=id;
         this.name=name;
         this.address=address;
 }
@@ -70,10 +70,10 @@ public boolean VertifyPin(String InputPin) throws NoSuchAlgorithmException {
         }
 }
 
-public void setID(String id){this.id=id;}
+public void setID(int id){this.tax_id=id;}
 public void setName(String name){this.name=name;}
 public void setAddress(String address){this.address=address;}
-public String getID(){return id;}
+public int getID(){return tax_id;}
 public String getName(){return name;}
 public String getAddress(){return address;}
 

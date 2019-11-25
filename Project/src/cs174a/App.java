@@ -90,6 +90,106 @@ public class App implements Testable
 	}
 
 	/**
+	 * Destroy all of the tables in your DB.
+	 * @return a string "r", where r = 0 for success, 1 for error.
+	 */
+	@Override
+	public String dropTables(){
+		return "STUB";
+	}
+
+	/**
+	 * Create all of your tables in your DB.
+	 * @return a string "r", where r = 0 for success, 1 for error.
+	 */
+	@Override
+	public String createTables(){
+		String r = "0";
+		Statement stmt = null;
+
+		final String CREATE_TABLE_Customers="CREATE TABLE Customers ("
+				+ "tax_id INTEGER,"
+				+ "name CHAR(20) NOT NULL,"
+				+ "address CHAR(40) NOT NULL,"
+				+ "pin CHAR(20) NOT NULL,"
+				+ "PRIMARY KEY (tax_id))";
+
+		final String CREATE_TABLE_Accounts="CREATE TABLE Accounts ("
+				+ "account_id INTEGER,"
+				+ "branch_name CHAR(20) NOT NULL,"
+				+ "account_type CHAR(20) NOT NULL,"
+				+ "rate REAL,"
+				+ "PRIMARY KEY (account_id))";
+
+		final String CREATE_TABLE_Transactions="CREATE TABLE Transactions ("
+				+ "transaction_id INTEGER,"
+				+ "transaction_type CHAR(20) NOT NULL,"
+				+ "time DATE NOT NULL,"
+				+ "amount REAL NOT NULL,"
+				+ "PRIMARY KEY (transaction_id))";
+
+		final String CREATE_TABLE_Generate="CREATE TABLE Generate ("
+				+ "tax_id INTEGER,"
+				+ "transaction_id INTEGER,"
+				+ "account_id_one INTEGER NOT NULL,"
+				+ "account_id_two INTEGER,"
+				+ "PRIMARY KEY (tax_id,transaction_id,account_id_one),"
+				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
+				+ "FOREIGN KEY(transaction_id) REFERENCES Transactions,"
+				+ "FOREIGN KEY(account_id_one) REFERENCES Accounts)";
+
+		final String CREATE_TABLE_Own="CREATE TABLE Own ("
+				+ "tax_id INTEGER,"
+				+ "account_id INTEGER,"
+				+ "isprimary INTEGER,"
+				+ "PRIMARY KEY (tax_id,account_id),"
+				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
+				+ "FOREIGN KEY(account_id_one) REFERENCES Accounts)";
+
+		try{
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(CREATE_TABLE_Customers);
+			stmt.executeUpdate(CREATE_TABLE_Accounts);
+			stmt.executeUpdate(CREATE_TABLE_Transactions);
+			stmt.executeUpdate(CREATE_TABLE_Generate);
+			stmt.executeUpdate(CREATE_TABLE_Own);
+			System.out.println("Tables created");
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1";
+		}
+
+		return r;
+	}
+
+	/**
+	 * Set system's date.
+	 * @param year Valid 4-digit year, e.g. 2019.
+	 * @param month Valid month, where 1: January, ..., 12: December.
+	 * @param day Valid day, from 1 to 31, depending on the month (and if it's a leap year).
+	 * @return a string "r yyyy-mm-dd", where r = 0 for success, 1 for error; and yyyy-mm-dd is the new system's date, e.g. 2012-09-16.
+	 */
+	@Override
+	public String setDate( int year, int month, int day ){
+		return "STUB";
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
 	 * Example of one of the testable functions.
 	 */
 	@Override
