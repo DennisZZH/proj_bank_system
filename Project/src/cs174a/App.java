@@ -95,7 +95,32 @@ public class App implements Testable
 	 */
 	@Override
 	public String dropTables(){
-		return "STUB";
+		String r = "0";
+		Statement stmt = null;
+		final String DROP_TABLE_Customers = "DROP TABLE Customers";
+		final String DROP_TABLE_Accounts = "DROP TABLE Accounts";
+		final String DROP_TABLE_Transactions = "DROP TABLE Transactions";
+		final String DROP_TABLE_Generate = "DROP TABLE Generate";
+		final String DROP_TABLE_Own = "DROP TABLE Own";
+		try{
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(DROP_TABLE_Customers);
+			stmt.executeUpdate(DROP_TABLE_Accounts);
+			stmt.executeUpdate(DROP_TABLE_Transactions);
+			stmt.executeUpdate(DROP_TABLE_Generate);
+			stmt.executeUpdate(DROP_TABLE_Own);
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1";
+		}finally {
+			try{
+				if(stmt != null)
+					stmt.close();
+			}catch (SQLException e){
+				e.printStackTrace();
+			}
+		}
+		return r;
 	}
 
 	/**
@@ -157,8 +182,14 @@ public class App implements Testable
 		}catch (SQLException e){
 			e.printStackTrace();
 			r = "1";
+		}finally {
+			try{
+				if(stmt != null)
+					stmt.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
-
 		return r;
 	}
 
@@ -171,7 +202,9 @@ public class App implements Testable
 	 */
 	@Override
 	public String setDate( int year, int month, int day ){
-		return "STUB";
+		String r = "0 ";
+
+		return r;
 	}
 
 
