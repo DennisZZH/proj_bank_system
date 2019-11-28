@@ -1,10 +1,10 @@
 package cs174a;                                             // THE BASE PACKAGE FOR YOUR APP MUST BE THIS ONE.  But you may add subpackages.
 
 // You may have as many imports as you need.
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jdbc.OracleConnection;
@@ -92,6 +92,7 @@ public class App implements Testable {
 		final String DROP_TABLE_Transactions = "DROP TABLE Transactions";
 		final String DROP_TABLE_Generate = "DROP TABLE Generate";
 		final String DROP_TABLE_Own = "DROP TABLE Own";
+		final String DROP_TABLE_System_Date = "DROP TABLE System_Date";
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(DROP_TABLE_Customers);
@@ -99,6 +100,8 @@ public class App implements Testable {
 			stmt.executeUpdate(DROP_TABLE_Transactions);
 			stmt.executeUpdate(DROP_TABLE_Generate);
 			stmt.executeUpdate(DROP_TABLE_Own);
+			stmt.executeUpdate(DROP_TABLE_System_Date);
+			System.out.println("Tables dropped");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			r = "1";
@@ -162,6 +165,10 @@ public class App implements Testable {
 				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
 				+ "FOREIGN KEY(account_id_one) REFERENCES Accounts)";
 
+		final String CREATE_TABLE_System_Date = "CREATE TABLE System_Date ("
+				+ "date DATE,"
+				+ "PRIMARY KEY (date))";
+
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(CREATE_TABLE_Customers);
@@ -169,6 +176,7 @@ public class App implements Testable {
 			stmt.executeUpdate(CREATE_TABLE_Transactions);
 			stmt.executeUpdate(CREATE_TABLE_Generate);
 			stmt.executeUpdate(CREATE_TABLE_Own);
+			stmt.executeUpdate(CREATE_TABLE_System_Date);
 			System.out.println("Tables created");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -192,13 +200,43 @@ public class App implements Testable {
 	 * @param day   Valid day, from 1 to 31, depending on the month (and if it's a leap year).
 	 * @return a string "r yyyy-mm-dd", where r = 0 for success, 1 for error; and yyyy-mm-dd is the new system's date, e.g. 2012-09-16.
 	 */
+
 	@Override
 	public String setDate(int year, int month, int day) {
 		String r = "0 ";
+		PreparedStatement ps = null;
+		String date_str = Integer.toString(year) + '-' + Integer.toString(month) + '-' + Integer.toString(day);
+		Date date = parseDate(date_str);
 
-		return r;
+		final String INSERT_INTO_System_Date = "INSERT INTO System_Date"
+				+ "VALUES (?)";
+
+		try{
+			ps = _connection.prepareStatement(INSERT_INTO_System_Date);
+			ps.setDate(1, new java.sql.Date(date.getTime()));
+			ps.executeUpdate();
+			System.out.println("Date inserted: " + date_str);
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try{
+				if(ps != null)
+					ps.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		return r + date_str;
 	}
 
+	public static Date parseDate(String date) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * Another example.
