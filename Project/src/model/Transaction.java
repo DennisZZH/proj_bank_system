@@ -23,7 +23,7 @@ public class Transaction {
         this.from=from;
         this.to=to;
         this.fee=fee;
-        this.check_number=check_number;
+        this.check_number=Double.toString(check_number);
     }
 
     public void setId(int id){

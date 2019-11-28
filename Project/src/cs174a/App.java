@@ -133,21 +133,12 @@ public class App implements Testable {
 				+ "pin CHAR(20) NOT NULL,"
 				+ "PRIMARY KEY (tax_id))";
 
-
-		final String CREATE_TABLE_Accounts="CREATE TABLE Accounts ("
-				+ "account_id CHAR(20),"
-				+ "account_id INTEGER,"
-				+ "branch_name CHAR(20) NOT NULL,"
-				+ "account_type CHAR(20) NOT NULL,"
-				+ "rate REAL,"
-				+ "PRIMARY KEY (account_id))";
-
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
 				+ "account_id INTEGER,"
 				+ "branch_name CHAR(20) NOT NULL,"
 				+ "account_type CHAR(20) NOT NULL,"
 				+ "rate REAL,"
-				+ "isClosed BOOLEAN,"
+				+ "isClosed INTEGER,"
 				+ "PRIMARY KEY (account_id))";
 
 		final String CREATE_TABLE_Transactions = "CREATE TABLE Transactions ("
