@@ -239,8 +239,22 @@ public class App implements Testable {
 		}
 	}
 
+
 	/**
-	 * Another example.
+	 * Create a new checking or savings account.
+	 * If customer is new, then their name and address should be provided.
+	 * @param accountType New account's checking or savings type.
+	 * @param id New account's ID.
+	 * @param initialBalance Initial account balance.
+	 * @param tin Account's owner Tax ID number - it may belong to an existing or new customer.
+	 * @param name [Optional] If customer is new, this is the customer's name. //or is "know"
+	 * @param address [Optional] If customer is new, this is the custfomer's address.//or is "known"
+	 * @return a string "r aid type balance tin", where
+	 *         r = 0 for success, 1 for error;
+	 *         aid is the new account id;
+	 *         type is the new account's type (see the enum codes above, e.g. INTEREST_CHECKING);
+	 *         balance is the account's initial balance with 2 decimal places (e.g. 1000.34, as with %.2f); and
+	 *         tin is the Tax ID of account's primary owner.
 	 */
 	@Override
 	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
@@ -349,32 +363,11 @@ public class App implements Testable {
 
 
 	/**
-	 * Example of one of the testable functions.
+	 * Generate list of closed accounts.
+	 * @return a string "r id1 id2 ... idn", where
+	 *         r = 0 for success, 1 for error; and
+	 *         id1 id2 ... idn is a list of space-separated closed account IDs.
 	 */
-
-	public String UpdateStatus(String aid,boolean isClosed){
-		String r="0";
-		Statement stmt=null;
-		String sql = "UPDATE Accounts SET isClosed=" + isClosed + " WHERE id=" + aid;
-		try {
-			stmt = _connection.createStatement();
-			stmt.executeUpdate(sql);
-		}catch (SQLException e){
-			e.printStackTrace();
-			r = "1";
-		}finally {
-			try{
-				if(stmt != null)
-					stmt.close();
-			}catch (Exception e){
-				e.printStackTrace();
-			}
-		}
-		return r;
-	}
-
-
-
 	@Override
 	public String listClosedAccounts() {
 		Statement stmt = null;
@@ -406,5 +399,25 @@ public class App implements Testable {
 		return r + " " + result;
 	}
 
+	public String UpdateStatus(String aid,boolean isClosed){
+		String r="0";
+		Statement stmt=null;
+		String sql = "UPDATE Accounts SET isClosed=" + isClosed + " WHERE id=" + aid;
+		try {
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(sql);
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1";
+		}finally {
+			try{
+				if(stmt != null)
+					stmt.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		return r;
+	}
 
 }
