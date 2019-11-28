@@ -34,6 +34,9 @@ public class Main
 			// Another example test.
 			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "account1", 1234.56, "theTaxID", "Im YoungMing", "Known" );
 			System.out.println( r );
+
+			r=app.UpdateStatus("account1",true);
+			System.out.println(r);
 		}
 	}
 	//!### FINALIZAMOS

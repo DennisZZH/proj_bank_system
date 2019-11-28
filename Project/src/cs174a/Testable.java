@@ -1,4 +1,4 @@
-/*
+ /*
  * CS174A Project Test Class.
  * Crated by Im YoungMin on October 29, 2019.
  */
@@ -57,8 +57,8 @@ interface Testable
 	 * @param id New account's ID.
 	 * @param initialBalance Initial account balance.
 	 * @param tin Account's owner Tax ID number - it may belong to an existing or new customer.
-	 * @param name [Optional] If customer is new, this is the customer's name.
-	 * @param address [Optional] If customer is new, this is the customer's address.
+	 * @param name [Optional] If customer is new, this is the customer's name. //or is "know"
+	 * @param address [Optional] If customer is new, this is the custfomer's address.//or is "known"
 	 * @return a string "r aid type balance tin", where
 	 *         r = 0 for success, 1 for error;
 	 *         aid is the new account id;
