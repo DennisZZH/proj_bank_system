@@ -133,11 +133,21 @@ public class App implements Testable {
 				+ "pin CHAR(20) NOT NULL,"
 				+ "PRIMARY KEY (tax_id))";
 
+
+		final String CREATE_TABLE_Accounts="CREATE TABLE Accounts ("
+				+ "account_id CHAR(20),"
+				+ "account_id INTEGER,"
+				+ "branch_name CHAR(20) NOT NULL,"
+				+ "account_type CHAR(20) NOT NULL,"
+				+ "rate REAL,"
+				+ "PRIMARY KEY (account_id))";
+
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
 				+ "account_id INTEGER,"
 				+ "branch_name CHAR(20) NOT NULL,"
 				+ "account_type CHAR(20) NOT NULL,"
 				+ "rate REAL,"
+				+ "isClosed BOOLEAN,"
 				+ "PRIMARY KEY (account_id))";
 
 		final String CREATE_TABLE_Transactions = "CREATE TABLE Transactions ("
@@ -242,7 +252,14 @@ public class App implements Testable {
 	 * Another example.
 	 */
 	@Override
-	public String createCheckingSavingsAccount(AccountType accountType, String id, double initialBalance, String tin, String name, String address) {
+	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
+	{
+		//先intialaccount再用relation将customer和account连起来
+		//String sql="INSERT INTO Accounts VALUES(?,?,?,?,?)";
+		//Account account = new Account(accountType,id,initialBalance);
+
+
+		//return "0/1,aid,accpoun_type,initial_balance,primary_owner_taxid"
 		return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
 	}
 
@@ -334,18 +351,68 @@ public class App implements Testable {
 	 *         fromNewBalance is the new balance of the source pocket account, with up to 2 decimal places (e.g. with %.2f); and
 	 *         toNewBalance is the new balance of destination pocket account, with up to 2 decimal places.
 	 */
-	@Override
 	public String payFriend( String from, String to, double amount ){
 		return "STUB";
+
 	}
 
 
 	/**
 	 * Example of one of the testable functions.
 	 */
+
+	public String UpdateStatus(String aid,boolean isClosed){
+		String r="0";
+		Statement stmt=null;
+		String sql = "UPDATE Accounts SET isClosed=" + isClosed + " WHERE id=" + aid;
+		try {
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(sql);
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1";
+		}finally {
+			try{
+				if(stmt != null)
+					stmt.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		return r;
+	}
+
+
+
 	@Override
 	public String listClosedAccounts() {
-		return "0 it works!";
+		Statement stmt = null;
+		String r = "0 ";
+		String result = "";
+		String sql = "SELECT * FROM Accounts WHERE isClosed= false ";
+
+		try {
+			stmt = _connection.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String aid = rs.getString("account_id");
+				result = aid + result;
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			r = "1";
+
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return r + " " + result;
 	}
 
 

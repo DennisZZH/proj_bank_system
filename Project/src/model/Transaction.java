@@ -9,12 +9,21 @@ public class Transaction {
     private Date time;
     private Boolean isClosed;
 
-    public Transaction(int id, TransactionType type, double amount, Date time, Boolean isClosed){
+    private int from;
+    private int to;
+    private double fee;
+    private String check_number;
+
+    public Transaction(int id, TransactionType type, double amount, Date time, Boolean isClosed,int from,int to,double fee,double check_number){
         this.transaction_id = id;
         this.transaction_type = type;
         this.amount = amount;
         this.time = time;
         this.isClosed = isClosed;
+        this.from=from;
+        this.to=to;
+        this.fee=fee;
+        this.check_number=check_number;
     }
 
     public void setId(int id){
@@ -33,6 +42,17 @@ public class Transaction {
 
     public void setIsClosed(Boolean isClosed){ this.isClosed = isClosed; }
 
+    public void setFrom(int from){this.from=from;}
+
+    public void setTo(int to){this.to=to;}
+
+    public void setFee(double fee){this.fee=fee;}
+
+    public void setCheck_number(String check_number){this.check_number=check_number;}
+
+
+
+
     public int getId(){return this.transaction_id; }
 
     public TransactionType getType(){
@@ -50,5 +70,13 @@ public class Transaction {
     public Boolean getIsClosed(){
         return this.isClosed;
     }
+
+    public int getFrom(){return from;}
+
+    public int getTo(){return to;}
+
+    public double getFee(){return fee;}
+
+    public String getCheck_number(){return check_number;}
 
 }
