@@ -12,9 +12,9 @@ public class Transaction {
     private int from;
     private int to;
     private double fee;
-    private String check_number;
+    private int check_number;
 
-    public Transaction(int id, TransactionType type, double amount, Date time, Boolean isClosed,int from,int to,double fee,double check_number){
+    public Transaction(int id, TransactionType type, double amount, Date time, Boolean isClosed,int from,int to,double fee, int check_number){
         this.transaction_id = id;
         this.transaction_type = type;
         this.amount = amount;
@@ -23,7 +23,7 @@ public class Transaction {
         this.from=from;
         this.to=to;
         this.fee=fee;
-        this.check_number=Double.toString(check_number);
+        this.check_number= check_number;
     }
 
     public void setId(int id){
@@ -48,7 +48,7 @@ public class Transaction {
 
     public void setFee(double fee){this.fee=fee;}
 
-    public void setCheck_number(String check_number){this.check_number=check_number;}
+    public void setCheck_number(int check_number){this.check_number=check_number;}
 
 
 
@@ -77,6 +77,6 @@ public class Transaction {
 
     public double getFee(){return fee;}
 
-    public String getCheck_number(){return check_number;}
+    public int getCheck_number(){return check_number;}
 
 }
