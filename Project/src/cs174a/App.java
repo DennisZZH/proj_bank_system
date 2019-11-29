@@ -130,13 +130,14 @@ public class App implements Testable {
 				+ "tax_id INTEGER,"
 				+ "name CHAR(20) NOT NULL,"
 				+ "address CHAR(40) NOT NULL,"
-				+ "pin CHAR(20) NOT NULL,"
+				+ "pin CHAR(20),"
 				+ "PRIMARY KEY (tax_id))";
 
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
 				+ "account_id INTEGER,"
-				+ "branch_name CHAR(20) NOT NULL,"
 				+ "account_type CHAR(20) NOT NULL,"
+				+ "balance REAL NOT NULL,"
+				+ "branch_name CHAR(20),"
 				+ "rate REAL,"
 				+ "isClosed INTEGER,"
 				+ "PRIMARY KEY (account_id))";
@@ -259,13 +260,53 @@ public class App implements Testable {
 	@Override
 	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
-		//先intialaccount再用relation将customer和account连起来
-		//String sql="INSERT INTO Accounts VALUES(?,?,?,?,?)";
-		//Account account = new Account(accountType,id,initialBalance);
 
+		String r = "0 ";
+		Statement stmt = null;
+		String add_on = id + accountType + Double.toString(initialBalance) + tin;
 
-		//return "0/1,aid,accpoun_type,initial_balance,primary_owner_taxid"
-		return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
+		final String INSERT_INTO_Accounts = "INSERT INTO Accounts " +
+				"VALUES (" + id + "," + accountType + "," + Double.toString(initialBalance) + ")";
+		try{
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(INSERT_INTO_Accounts);
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}
+
+		if(name == "known" && address == "known"){
+			// existed customer
+		}else{
+			// new customer
+			final String INSERT_INTO_Customers = "INSERT INTO Customers " +
+					"VALUES (" + tin + "," + "," + name + "," + address + ")";
+			try{
+				stmt.executeUpdate(INSERT_INTO_Customers);
+			}catch(SQLException e){
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		final String INSERT_INTO_Own = "INSERT INTO Own " +
+				"VALUES (" + tin + "," + id + "," + "1" + ")";
+		try{
+			stmt.executeUpdate(INSERT_INTO_Own);
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		return r + add_on;
 	}
 
 
