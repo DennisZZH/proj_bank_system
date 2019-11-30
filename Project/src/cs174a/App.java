@@ -262,10 +262,9 @@ public class App implements Testable {
 	@Override
 	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
-
 		String r = "0 ";
 		Statement stmt = null;
-		String add_on = id + accountType + Double.toString(initialBalance) + tin;
+		String add_on = id + " " + accountType + " " + Double.toString(initialBalance) + " " + tin;
 
 		double rate = 0.0;
 		if(accountType == AccountType.INTEREST_CHECKING){
@@ -276,35 +275,26 @@ public class App implements Testable {
 			rate = 0.048;
 		}
 
-		if(name == "known" && address == "known"){
-			// existed customer
-		}else{
-			// new customer
-			final String INSERT_INTO_Customers = "INSERT INTO Customers " +
-					"VALUES (" + tin + "," + name + "," + address + ")";
-			try{
-				stmt.executeUpdate(INSERT_INTO_Customers);
-			}catch(SQLException e){
-				e.printStackTrace();
-				r = "1 ";
-			}
-		}
+		final String INSERT_INTO_Customers = "INSERT INTO Customers " +
+											"VALUES (" + tin + "," + name + "," + address + ")";
 
 		final String INSERT_INTO_Accounts = "INSERT INTO Accounts " +
-				"VALUES (" + id + "," + accountType.toString() + "," + Double.toString(initialBalance) + "," + tin + "," + Double.toString(rate) + ")";
-		try{
-			stmt = _connection.createStatement();
-			stmt.executeUpdate(INSERT_INTO_Accounts);
-		}catch(SQLException e){
-			e.printStackTrace();
-			r = "1 ";
-		}
+											"VALUES (" + id + "," + accountType.toString() + "," + Double.toString(initialBalance) + "," + tin + "," + Double.toString(rate) + ")";
 
 		final String INSERT_INTO_Own = "INSERT INTO Own " +
-				"VALUES (" + tin + "," + id + "," + "1" + ")";
+										"VALUES (" + tin + "," + id + "," + "1" + ")";
+
 		try{
+			stmt = _connection.createStatement();
+			if(name == "known" && address == "known"){
+				// existed customer
+			}else{
+				// new customer
+				stmt.executeUpdate(INSERT_INTO_Customers);
+			}
+			stmt.executeUpdate(INSERT_INTO_Accounts);
 			stmt.executeUpdate(INSERT_INTO_Own);
-		}catch (SQLException e){
+		}catch(SQLException e){
 			e.printStackTrace();
 			r = "1 ";
 		}finally {
@@ -337,7 +327,41 @@ public class App implements Testable {
 	 */
 	@Override
 	public String createPocketAccount(String id, String linkedId, double initialTopUp, String tin) {
-		return "STUB";
+		String r = "0 ";
+		String add_on = id + " " + AccountType.POCKET.toString() + " " + Double.toString(initialTopUp) + " " + tin;
+		Statement stmt = null;
+
+		final String query = "SELECT * FROM Accounts WHERE account_id = " + linkedId;
+		final String update = "UPDATE Accounts SET balance = balance - " + Double.toString(initialTopUp)
+				+ " WHERE account_id = " + linkedId;
+		final String create_pocket = "INSERT INTO Accounts " +
+				"VALUES (" + id + "," + AccountType.POCKET.toString() + "," + Double.toString(initialTopUp) + "," + tin + "," + "0.0" + ")";
+
+		try{
+			stmt = _connection.createStatement();
+			ResultSet result = stmt.executeQuery(query);
+			double balance = result.getDouble("balance");
+			if(balance - 0.01 <= initialTopUp){
+				// Transaction failed due to low balance
+				r = "1 ";
+			}else{
+				stmt.executeUpdate(update);
+				stmt.executeUpdate(create_pocket);
+			}
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		return r + add_on;
 	}
 
 
@@ -351,7 +375,33 @@ public class App implements Testable {
 	 */
 	@Override
 	public String createCustomer( String accountId, String tin, String name, String address ){
-		return "STUB";
+		String r = "0";
+		Statement stmt = null;
+
+		final String create_customer = "INSERT INTO Customers " +
+										"VALUES (" + tin + "," + name + "," + address + ")";
+
+		final String create_own = "INSERT INTO Own " +
+									"VALUES (" + tin + "," + accountId + "," + "0" + ")";
+
+		try{
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(create_customer);
+			stmt.executeUpdate(create_own);
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		return r;
 	}
 
 
