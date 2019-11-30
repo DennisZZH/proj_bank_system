@@ -130,17 +130,19 @@ public class App implements Testable {
 				+ "tax_id INTEGER,"
 				+ "name CHAR(20) NOT NULL,"
 				+ "address CHAR(40) NOT NULL,"
-				+ "pin CHAR(20),"
+				+ "pin INTEGER DEFAULT 1717,"
 				+ "PRIMARY KEY (tax_id))";
 
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
 				+ "account_id INTEGER,"
 				+ "account_type CHAR(20) NOT NULL,"
 				+ "balance REAL NOT NULL,"
-				+ "branch_name CHAR(20),"
+				+ "primary_owner_id INTEGER NOT NULL,"
 				+ "rate REAL,"
-				+ "isClosed INTEGER,"
-				+ "PRIMARY KEY (account_id))";
+				+ "isClosed INTEGER DEFAULT 0,"				// 1 for true, 0 for false
+				+ "branch_name CHAR(20) DEFAULT NULL,"
+				+ "PRIMARY KEY (account_id)"
+				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers)";
 
 		final String CREATE_TABLE_Transactions = "CREATE TABLE Transactions ("
 				+ "transaction_id INTEGER,"
@@ -162,10 +164,10 @@ public class App implements Testable {
 		final String CREATE_TABLE_Own = "CREATE TABLE Own ("
 				+ "tax_id INTEGER,"
 				+ "account_id INTEGER,"
-				+ "isprimary INTEGER,"
+				+ "isprimary INTEGER NOT NULL,"
 				+ "PRIMARY KEY (tax_id,account_id),"
 				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
-				+ "FOREIGN KEY(account_id_one) REFERENCES Accounts)";
+				+ "FOREIGN KEY(account_id) REFERENCES Accounts)";
 
 		final String CREATE_TABLE_System_Date = "CREATE TABLE System_Date ("
 				+ "date DATE,"
@@ -265,14 +267,13 @@ public class App implements Testable {
 		Statement stmt = null;
 		String add_on = id + accountType + Double.toString(initialBalance) + tin;
 
-		final String INSERT_INTO_Accounts = "INSERT INTO Accounts " +
-				"VALUES (" + id + "," + accountType + "," + Double.toString(initialBalance) + ")";
-		try{
-			stmt = _connection.createStatement();
-			stmt.executeUpdate(INSERT_INTO_Accounts);
-		}catch(SQLException e){
-			e.printStackTrace();
-			r = "1 ";
+		double rate = 0.0;
+		if(accountType == AccountType.INTEREST_CHECKING){
+			rate = 0.03;
+		}else if(accountType == AccountType.STUDENT_CHECKING){
+			rate = 0.0;
+		}else if(accountType == AccountType.SAVINGS){
+			rate = 0.048;
 		}
 
 		if(name == "known" && address == "known"){
@@ -280,13 +281,23 @@ public class App implements Testable {
 		}else{
 			// new customer
 			final String INSERT_INTO_Customers = "INSERT INTO Customers " +
-					"VALUES (" + tin + "," + "," + name + "," + address + ")";
+					"VALUES (" + tin + "," + name + "," + address + ")";
 			try{
 				stmt.executeUpdate(INSERT_INTO_Customers);
 			}catch(SQLException e){
 				e.printStackTrace();
 				r = "1 ";
 			}
+		}
+
+		final String INSERT_INTO_Accounts = "INSERT INTO Accounts " +
+				"VALUES (" + id + "," + accountType.toString() + "," + Double.toString(initialBalance) + "," + tin + "," + Double.toString(rate) + ")";
+		try{
+			stmt = _connection.createStatement();
+			stmt.executeUpdate(INSERT_INTO_Accounts);
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1 ";
 		}
 
 		final String INSERT_INTO_Own = "INSERT INTO Own " +
