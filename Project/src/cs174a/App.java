@@ -2,10 +2,13 @@ package cs174a;                                             // THE BASE PACKAGE 
 
 // You may have as many imports as you need.
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.SplittableRandom;
+
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jdbc.OracleConnection;
 
@@ -138,8 +141,9 @@ public class App implements Testable {
 				+ "account_type CHAR(20) NOT NULL,"
 				+ "balance REAL NOT NULL,"
 				+ "primary_owner_id INTEGER NOT NULL,"
-				+ "rate REAL,"
+				+ "rate REAL NOT NULL,"
 				+ "isClosed INTEGER DEFAULT 0,"				// 1 for true, 0 for false
+				+ "linked_account_id INTEGER DEFAULT NULL,"
 				+ "branch_name CHAR(20) DEFAULT NULL,"
 				+ "PRIMARY KEY (account_id)"
 				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers)";
@@ -335,7 +339,7 @@ public class App implements Testable {
 		final String update = "UPDATE Accounts SET balance = balance - " + Double.toString(initialTopUp)
 				+ " WHERE account_id = " + linkedId;
 		final String create_pocket = "INSERT INTO Accounts " +
-				"VALUES (" + id + "," + AccountType.POCKET.toString() + "," + Double.toString(initialTopUp) + "," + tin + "," + "0.0" + ")";
+				"VALUES (" + id + "," + AccountType.POCKET.toString() + "," + Double.toString(initialTopUp) + "," + tin + "," + "0.0" + "," + "0" + linkedId +")";
 
 		try{
 			stmt = _connection.createStatement();
@@ -416,7 +420,35 @@ public class App implements Testable {
 	 */
 	@Override
 	public String deposit( String accountId, double amount ){
-		return "STUB";
+		String r = "0 ";
+		double old_balance = 0.00, new_balance = 0.00;
+		Statement stmt = null;
+
+		final String query = "SELECT * FROM Accounts WHERE account_id = " + accountId;
+		try{
+			stmt = _connection.createStatement();
+			ResultSet result = stmt.executeQuery(query);
+			old_balance = result.getDouble("balance");
+			new_balance = old_balance + amount;
+			final String update = "UPDATE Accounts SET balance = " + Double.toString(new_balance) + " WHERE account_id = " + accountId;
+			stmt.executeUpdate(update);
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		DecimalFormat df2 = new DecimalFormat("#.##");
+		String add_on = df2.format(old_balance) + " " + df2.format(new_balance);
+
+		return r + add_on;
 	}
 
 
@@ -429,7 +461,31 @@ public class App implements Testable {
 	 */
 	@Override
 	public String showBalance( String accountId ){
-		return "STUB";
+		String r = "0 ";
+		double balance = 0.00;
+		Statement stmt = null;
+
+		final String query = "SELECT * FROM Accounts WHERE account_id = " + accountId;
+		try{
+			stmt = _connection.createStatement();
+			ResultSet result = stmt.executeQuery(query);
+			balance = result.getDouble("balance");
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		String add_on = String.format("%.2f", balance);
+
+		return r + add_on;
 	}
 
 
@@ -444,7 +500,52 @@ public class App implements Testable {
 	 */
 	@Override
 	public String topUp( String accountId, double amount ){
-		return "STUB";
+		String r = "0 ";
+		Statement stmt = null;
+		double old_linked_balance = 0.00, new_linked_balance = 0.00;
+		double old_pocket_balance = 0.00, new_pocket_balance = 0.00;
+		int linkedId = 0;
+		String add_on = String.format("%.2f", old_linked_balance) + " " + String.format("%.2f", old_pocket_balance);
+
+		final String query_pocket = "SELECT * FROM Accounts WHERE account_id = " + accountId;
+		try{
+			stmt = _connection.createStatement();
+			ResultSet pocket_result = stmt.executeQuery(query_pocket);
+			old_pocket_balance = pocket_result.getDouble("balance");
+			linkedId = pocket_result.getInt("linked_account_id");
+
+			final String query_linked = "SELECT * FROM Accounts WHERE account_id = " + Integer.toString(linkedId);
+			ResultSet lined_result = stmt.executeQuery(query_linked);
+			old_linked_balance = lined_result.getDouble("balance");
+
+			if(old_linked_balance - 0.01 <= amount){
+				// Transaction failed due to low balance
+				r = "1 ";
+			}else{
+				// Transaction success
+				new_linked_balance = old_linked_balance - amount;
+				new_pocket_balance = old_pocket_balance + amount;
+				final String update_linked = "UPDATE Accounts SET balance = " + Double.toString(new_linked_balance) + " WHERE account_id = " + Integer.toString(linkedId);
+				final String update_pocket = "UPDATE Accounts SET balance = " + Double.toString(new_pocket_balance) + " WHERE account_id = " + accountId;
+				stmt.executeUpdate(update_linked);
+				stmt.executeUpdate(update_pocket);
+				add_on = String.format("%.2f", new_linked_balance) + " " + String.format("%.2f", new_pocket_balance);
+			}
+
+		}catch (SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		return r + add_on;
 	}
 
 
@@ -459,8 +560,11 @@ public class App implements Testable {
 	 *         toNewBalance is the new balance of destination pocket account, with up to 2 decimal places.
 	 */
 	public String payFriend( String from, String to, double amount ){
-		return "STUB";
+		String r = "0 ";
 
+
+
+		return r;
 	}
 
 
