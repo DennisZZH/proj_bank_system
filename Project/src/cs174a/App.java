@@ -90,20 +90,20 @@ public class App implements Testable {
 	public String dropTables() {
 		String r = "0";
 		Statement stmt = null;
-		final String DROP_TABLE_Customers = "DROP TABLE Customers";
-		final String DROP_TABLE_Accounts = "DROP TABLE Accounts";
-		final String DROP_TABLE_Transactions = "DROP TABLE Transactions";
-		final String DROP_TABLE_Generate = "DROP TABLE Generate";
-		final String DROP_TABLE_Own = "DROP TABLE Own";
-		final String DROP_TABLE_System_Date = "DROP TABLE System_Date";
+		final String DROP_TABLE_Customers = "DROP TABLE Customers CASCADE CONSTRAINTS";
+		final String DROP_TABLE_Accounts = "DROP TABLE Accounts CASCADE CONSTRAINTS";
+		final String DROP_TABLE_Transactions = "DROP TABLE Transactions CASCADE CONSTRAINTS";
+		final String DROP_TABLE_Own = "DROP TABLE Own CASCADE CONSTRAINTS";
+		final String DROP_TABLE_PINs = "DROP TABLE PINS CASCADE CONSTRAINTS";
+		final String DROP_TABLE_Dates = "DROP TABLE Dates CASCADE CONSTRAINTS";
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(DROP_TABLE_Customers);
 			stmt.executeUpdate(DROP_TABLE_Accounts);
 			stmt.executeUpdate(DROP_TABLE_Transactions);
-			stmt.executeUpdate(DROP_TABLE_Generate);
 			stmt.executeUpdate(DROP_TABLE_Own);
-			stmt.executeUpdate(DROP_TABLE_System_Date);
+			stmt.executeUpdate(DROP_TABLE_PINs);
+			stmt.executeUpdate(DROP_TABLE_Dates);
 			System.out.println("Tables dropped");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -130,61 +130,60 @@ public class App implements Testable {
 		Statement stmt = null;
 
 		final String CREATE_TABLE_Customers = "CREATE TABLE Customers ("
-				+ "tax_id INTEGER,"
-				+ "name CHAR(20) NOT NULL,"
-				+ "address CHAR(40) NOT NULL,"
-				+ "pin INTEGER DEFAULT 1717,"
-				+ "PRIMARY KEY (tax_id))";
+				+ "tax_id VARCHAR(20) PRIMARY KEY,"
+				+ "name VARCHAR(20) NOT NULL,"
+				+ "address VARCHAR(50) NOT NULL)";
 
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
 				+ "account_id INTEGER,"
-				+ "account_type CHAR(20) NOT NULL,"
+				+ "account_type VARCHAR(20) NOT NULL,"
 				+ "balance REAL NOT NULL,"
-				+ "primary_owner_id INTEGER NOT NULL,"
+				+ "primary_owner_id VARCHAR(20) NOT NULL,"
 				+ "rate REAL NOT NULL,"
-				+ "isClosed INTEGER DEFAULT 0,"				// 1 for true, 0 for false
+				+ "isClosed INTEGER DEFAULT 0,"
 				+ "linked_account_id INTEGER DEFAULT NULL,"
-				+ "branch_name CHAR(20) DEFAULT NULL,"
-				+ "PRIMARY KEY (account_id)"
+				+ "branch_name VARCHAR(20) DEFAULT NULL,"
+				+ "PRIMARY KEY (account_id),"
 				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers)";
 
 		final String CREATE_TABLE_Transactions = "CREATE TABLE Transactions ("
 				+ "transaction_id INTEGER,"
-				+ "transaction_type CHAR(20) NOT NULL,"
+				+ "transaction_type VARCHAR(20) NOT NULL,"
 				+ "time DATE NOT NULL,"
 				+ "amount REAL NOT NULL,"
+				+ "customer_id VARCHAR(20),"
+				+ "from_id INTEGER,"
+				+ "to_id INTEGER,"
+				+ "fee REAL,"
+				+ "check_number VARCHAR2(20),"
+				+ "FOREIGN KEY (customer_id) REFERENCES Customers,"
+				+ "FOREIGN KEY (from_id) REFERENCES Accounts,"
+				+ "FOREIGN KEY (to_id) REFERENCES Accounts,"
 				+ "PRIMARY KEY (transaction_id))";
 
-		final String CREATE_TABLE_Generate = "CREATE TABLE Generate ("
-				+ "tax_id INTEGER,"
-				+ "transaction_id INTEGER,"
-				+ "account_id_one INTEGER NOT NULL,"
-				+ "account_id_two INTEGER,"
-				+ "PRIMARY KEY (tax_id,transaction_id,account_id_one),"
-				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
-				+ "FOREIGN KEY(transaction_id) REFERENCES Transactions,"
-				+ "FOREIGN KEY(account_id_one) REFERENCES Accounts)";
-
 		final String CREATE_TABLE_Own = "CREATE TABLE Own ("
-				+ "tax_id INTEGER,"
+				+ "tax_id VARCHAR(20),"
 				+ "account_id INTEGER,"
 				+ "isprimary INTEGER NOT NULL,"
 				+ "PRIMARY KEY (tax_id,account_id),"
 				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
 				+ "FOREIGN KEY(account_id) REFERENCES Accounts)";
 
-		final String CREATE_TABLE_System_Date = "CREATE TABLE System_Date ("
-				+ "date DATE,"
-				+ "PRIMARY KEY (date))";
+		final String CREATE_TABLE_PINs = "CREATE TABLE PINs("
+				+ "customer_id VARCHAR(20) PRIMARY KEY NOT NULL,"
+				+ "pin CHAR(4))";
+
+		final String CREATE_TABLE_Dates = "CREATE TABLE Dates ("
+				+ "system_date DATE PRIMARY KEY NOT NULL)";
 
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(CREATE_TABLE_Customers);
 			stmt.executeUpdate(CREATE_TABLE_Accounts);
 			stmt.executeUpdate(CREATE_TABLE_Transactions);
-			stmt.executeUpdate(CREATE_TABLE_Generate);
 			stmt.executeUpdate(CREATE_TABLE_Own);
-			stmt.executeUpdate(CREATE_TABLE_System_Date);
+			stmt.executeUpdate(CREATE_TABLE_PINs);
+			stmt.executeUpdate(CREATE_TABLE_Dates);
 			System.out.println("Tables created");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -216,7 +215,7 @@ public class App implements Testable {
 		String date_str = Integer.toString(year) + '-' + Integer.toString(month) + '-' + Integer.toString(day);
 		Date date = parseDate(date_str);
 
-		final String INSERT_INTO_System_Date = "INSERT INTO System_Date"
+		final String INSERT_INTO_System_Date = "INSERT INTO Dates "
 				+ "VALUES (?)";
 
 		try{
@@ -561,10 +560,53 @@ public class App implements Testable {
 	 */
 	public String payFriend( String from, String to, double amount ){
 		String r = "0 ";
+		Statement stmt = null;
+		double old_from_balance = 0.00, new_from_balance = 0.00;
+		double old_to_balance = 0.00, new_to_balance = 0.00;
 
+		final String query_from = "SELECT * FROM Accounts WHERE account_id = " + from;
+		final String query_to = "SELECT * FROM Accounts WHERE account_id = " + to;
+		try {
+			stmt = _connection.createStatement();
+			ResultSet from_result = stmt.executeQuery(query_from);
+			old_from_balance = from_result.getDouble("balance");
+			ResultSet to_result = stmt.executeQuery(query_to);
+			old_to_balance = to_result.getDouble("balance");
 
+			if(amount > old_from_balance){
+				// Transaction failed due to inefficient balance
+				r = "1 ";
+			}else{
+				// Transaction proceed
+				new_from_balance = old_from_balance - amount;
+				new_to_balance = new_to_balance + amount;
+				final String update_from = "UPDATE Accounts SET balance = " + Double.toString(new_from_balance) + " WHERE account_id = " + from;
+				final String update_to = "UPDATE Accounts SET balance = " + Double.toString(new_to_balance) + " WHERE account_id = " + to;
+				stmt.executeUpdate(update_from);
+				stmt.executeUpdate(update_to);
 
-		return r;
+				if(new_from_balance <= 0.01){
+					// Source account needs to be closed due to a low balance
+					final String close_from = "UPDATE Accounts SET isClosed = " + "1" + " WHERE account_id = " + from;
+					stmt.executeUpdate(close_from);
+				}
+
+			}
+
+		}catch(SQLException e){
+			e.printStackTrace();
+			r = "1 ";
+		}finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+		}
+
+		return r + Double.toString(new_to_balance) + " " + Double.toString(new_to_balance);
 	}
 
 
