@@ -5,6 +5,7 @@ import cs174a.Testable.*;
 
 import java.sql.SQLOutput;
 
+
 /**
  * This is the class that launches your application.
  * DO NOT CHANGE ITS NAME.
@@ -32,7 +33,7 @@ public class Main
 //			//test dropTables						// PASS
 //			r = app.dropTables();
 //			System.out.println(r);
-//
+
 //			//test createTables						// PASS
 //			r = app.createTables();
 //			System.out.println(r);
@@ -44,7 +45,7 @@ public class Main
 
 
 
-//			// test createCheckingSavingsAccount
+//			// test createCheckingSavingsAccount	// PASS
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "41725", 1234.56, "201674933", "George Brush", "5346 Foothill Av" );
 //			System.out.println( r );
 //
@@ -62,24 +63,24 @@ public class Main
 //
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "29107", 3000.00, "209378521", "known", "known" );
 //			System.out.println( r );
-//
-//
-//
-//			//test createCustomer
+
+
+
+//			//test createCustomer					// PASS
 //			r = app.createCustomer("29107","12116070","Li Kung","2 People's Rd Beijing");
 //			System.out.println(r);
 //
 //			r = app.createCustomer("17431","412231856","Cindy Laugher","7000 Hollister");
 //			System.out.println(r);
-//
-//
-//			//test createPocketAccount
-//			r = app.createPocketAccount("53027","12121",500.00,"207843218");
-//			System.out.println(r);
-//
-//			r = app.createPocketAccount("43947","29107",500.00,"212116070");
-//			System.out.println(r);
-//
+
+
+			//test createPocketAccount
+			r = app.createPocketAccount("53027","12121",500.00,"207843218");
+			System.out.println(r);
+
+			r = app.createPocketAccount("43947","29107",500.00,"212116070");
+			System.out.println(r);
+
 //			//test deposit
 //			r = app.showBalance("41725");
 //			System.out.println(r);

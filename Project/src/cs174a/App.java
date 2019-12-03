@@ -11,6 +11,9 @@ import java.util.SplittableRandom;
 
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jdbc.OracleConnection;
+import oracle.jdbc.proxy.annotation.Pre;
+
+import model.TransactionType;
 
 /**
  * The most important class for your application.
@@ -135,13 +138,13 @@ public class App implements Testable {
 				+ "address VARCHAR(50) NOT NULL)";
 
 		final String CREATE_TABLE_Accounts = "CREATE TABLE Accounts ("
-				+ "account_id INTEGER,"
+				+ "account_id VARCHAR(20),"
 				+ "account_type VARCHAR(20) NOT NULL,"
 				+ "balance REAL NOT NULL,"
 				+ "primary_owner_id VARCHAR(20) NOT NULL,"
 				+ "rate REAL NOT NULL,"
 				+ "isClosed INTEGER DEFAULT 0,"
-				+ "linked_account_id INTEGER DEFAULT NULL,"
+				+ "linked_account_id VARCHAR(20) DEFAULT NULL,"
 				+ "branch_name VARCHAR(20) DEFAULT NULL,"
 				+ "PRIMARY KEY (account_id),"
 				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers)";
@@ -152,8 +155,8 @@ public class App implements Testable {
 				+ "time DATE NOT NULL,"
 				+ "amount REAL NOT NULL,"
 				+ "customer_id VARCHAR(20),"
-				+ "from_id INTEGER,"
-				+ "to_id INTEGER,"
+				+ "from_id VARCHAR(20),"
+				+ "to_id VARCHAR(20),"
 				+ "fee REAL,"
 				+ "check_number VARCHAR2(20),"
 				+ "FOREIGN KEY (customer_id) REFERENCES Customers,"
@@ -163,7 +166,7 @@ public class App implements Testable {
 
 		final String CREATE_TABLE_Own = "CREATE TABLE Own ("
 				+ "tax_id VARCHAR(20),"
-				+ "account_id INTEGER,"
+				+ "account_id VARCHAR(20),"
 				+ "isprimary INTEGER NOT NULL,"
 				+ "PRIMARY KEY (tax_id,account_id),"
 				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
@@ -266,7 +269,7 @@ public class App implements Testable {
 	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
 		String r = "0 ";
-		Statement stmt = null;
+		PreparedStatement ps = null;
 		String add_on = id + " " + accountType + " " + Double.toString(initialBalance) + " " + tin;
 
 		double rate = 0.0;
@@ -279,31 +282,46 @@ public class App implements Testable {
 		}
 
 		final String INSERT_INTO_Customers = "INSERT INTO Customers " +
-											"VALUES (" + tin + "," + name + "," + address + ")";
+											"VALUES (?, ?, ?)";
 
-		final String INSERT_INTO_Accounts = "INSERT INTO Accounts " +
-											"VALUES (" + id + "," + accountType.toString() + "," + Double.toString(initialBalance) + "," + tin + "," + Double.toString(rate) + ")";
+		final String INSERT_INTO_Accounts = "INSERT INTO Accounts (account_id, account_type, balance, primary_owner_id, rate) " +
+											"VALUES (?, ?, ?, ?, ?)";
 
 		final String INSERT_INTO_Own = "INSERT INTO Own " +
-										"VALUES (" + tin + "," + id + "," + "1" + ")";
+										"VALUES (?, ?, ?)";
 
 		try{
-			stmt = _connection.createStatement();
 			if(name == "known" && address == "known"){
 				// existed customer
 			}else{
 				// new customer
-				stmt.executeUpdate(INSERT_INTO_Customers);
+				ps = _connection.prepareStatement(INSERT_INTO_Customers);
+				ps.setString(1, tin);
+				ps.setString(2, name);
+				ps.setString(3, address);
+				ps.executeUpdate();
 			}
-			stmt.executeUpdate(INSERT_INTO_Accounts);
-			stmt.executeUpdate(INSERT_INTO_Own);
+			ps = _connection.prepareStatement(INSERT_INTO_Accounts);
+			ps.setString(1, id);
+			ps.setString(2, accountType.toString());
+			ps.setDouble(3, initialBalance);
+			ps.setString(4, tin);
+			ps.setDouble(5, rate);
+			ps.executeUpdate();
+
+			ps = _connection.prepareStatement(INSERT_INTO_Own);
+			ps.setString(1, tin);
+			ps.setString(2, id);
+			ps.setInt(3, 1);
+			ps.executeUpdate();
+
 		}catch(SQLException e){
 			e.printStackTrace();
 			r = "1 ";
 		}finally {
 			try {
-				if (stmt != null)
-					stmt.close();
+				if (ps != null)
+					ps.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				r = "1 ";
@@ -333,12 +351,16 @@ public class App implements Testable {
 		String r = "0 ";
 		String add_on = id + " " + AccountType.POCKET.toString() + " " + Double.toString(initialTopUp) + " " + tin;
 		Statement stmt = null;
+		PreparedStatement ps = null;
 
 		final String query = "SELECT * FROM Accounts WHERE account_id = " + linkedId;
 		final String update = "UPDATE Accounts SET balance = balance - " + Double.toString(initialTopUp)
-				+ " WHERE account_id = " + linkedId;
-		final String create_pocket = "INSERT INTO Accounts " +
-				"VALUES (" + id + "," + AccountType.POCKET.toString() + "," + Double.toString(initialTopUp) + "," + tin + "," + "0.0" + "," + "0" + linkedId +")";
+											+ " WHERE account_id = " + linkedId;
+		final String create_pocket = "INSERT INTO Accounts "
+											+ "(account_id, account_type, balance, primary_owner_id, rate, isClosed, linked_account_id)"
+											+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		final String create_transation = "INSERT INTO Transactions "
+												+ "(transaction_id, transaction_type, time, amount, customer_id, from_id, fee, check_number)";
 
 		try{
 			stmt = _connection.createStatement();
@@ -349,7 +371,21 @@ public class App implements Testable {
 				r = "1 ";
 			}else{
 				stmt.executeUpdate(update);
-				stmt.executeUpdate(create_pocket);
+
+				ps = _connection.prepareStatement(create_pocket);
+				ps.setString(1, id);
+				ps.setString(2, AccountType.POCKET.toString());
+				ps.setDouble(3, initialTopUp);
+				ps.setString(4, tin);
+				ps.setDouble(5, 0.00);
+				ps.setInt(6, 0);
+				ps.setString(7, linkedId);
+				ps.executeUpdate();
+
+				ps = _connection.prepareStatement(create_transation);
+				//STUB
+				ps.executeUpdate();
+
 			}
 		}catch (SQLException e){
 			e.printStackTrace();
@@ -358,6 +394,13 @@ public class App implements Testable {
 			try {
 				if (stmt != null)
 					stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				r = "1 ";
+			}
+			try {
+				if (ps != null)
+					ps.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				r = "1 ";
@@ -379,25 +422,34 @@ public class App implements Testable {
 	@Override
 	public String createCustomer( String accountId, String tin, String name, String address ){
 		String r = "0";
-		Statement stmt = null;
+		PreparedStatement ps = null;
 
 		final String create_customer = "INSERT INTO Customers " +
-										"VALUES (" + tin + "," + name + "," + address + ")";
+										"VALUES (?, ?, ?)";
 
 		final String create_own = "INSERT INTO Own " +
-									"VALUES (" + tin + "," + accountId + "," + "0" + ")";
+									"VALUES (?, ?, ?)";
 
 		try{
-			stmt = _connection.createStatement();
-			stmt.executeUpdate(create_customer);
-			stmt.executeUpdate(create_own);
+			ps = _connection.prepareStatement(create_customer);
+			ps.setString(1, tin);
+			ps.setString(2, name);
+			ps.setString(3, address);
+			ps.executeUpdate();
+
+			ps = _connection.prepareStatement(create_own);
+			ps.setString(1, tin);
+			ps.setString(2, accountId);
+			ps.setInt(3, 0);
+			ps.executeUpdate();
+
 		}catch (SQLException e){
 			e.printStackTrace();
 			r = "1";
 		}finally {
 			try {
-				if (stmt != null)
-					stmt.close();
+				if (ps != null)
+					ps.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				r = "1 ";
