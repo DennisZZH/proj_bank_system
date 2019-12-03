@@ -45,43 +45,20 @@ public class App implements Testable {
 		}
 	}
 
+
 	////////////////////////////// Implement all of the methods given in the interface /////////////////////////////////
 	// Check the Testable.java interface for the function signatures and descriptions.
 
 	@Override
 	public String initializeSystem() {
-		// Some constants to connect to your DB.
-		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##zihaozhang";
-		final String DB_PASSWORD = "8862062";
-
-		// Initialize your system.  Probably setting up the DB connection.
-		Properties info = new Properties();
-		info.put(OracleConnection.CONNECTION_PROPERTY_USER_NAME, DB_USER);
-		info.put(OracleConnection.CONNECTION_PROPERTY_PASSWORD, DB_PASSWORD);
-		info.put(OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH, "20");
-
 		try {
-			OracleDataSource ods = new OracleDataSource();
-			ods.setURL(DB_URL);
-			ods.setConnectionProperties(info);
-			_connection = (OracleConnection) ods.getConnection();
-
-			// Get the JDBC driver name and version.
-			DatabaseMetaData dbmd = _connection.getMetaData();
-			System.out.println("Driver Name: " + dbmd.getDriverName());
-			System.out.println("Driver Version: " + dbmd.getDriverVersion());
-
-			// Print some connection properties.
-			System.out.println("Default Row Prefetch Value is: " + _connection.getDefaultRowPrefetch());
-			System.out.println("Database Username is: " + _connection.getUserName());
-			System.out.println();
-
-			return "0";
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
+			DBConnector dbConnector = new DBConnector();
+			_connection = dbConnector.getConnection();
+		}catch(SQLException e){
+			e.printStackTrace();
 			return "1";
 		}
+		return "0";
 	}
 
 	/**
@@ -99,6 +76,7 @@ public class App implements Testable {
 		final String DROP_TABLE_Own = "DROP TABLE Own CASCADE CONSTRAINTS";
 		final String DROP_TABLE_PINs = "DROP TABLE PINS CASCADE CONSTRAINTS";
 		final String DROP_TABLE_Dates = "DROP TABLE Dates CASCADE CONSTRAINTS";
+		final String DROP_TABLE_IDs = "DROP TABLE IDs CASCADE CONSTRAINTS";
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(DROP_TABLE_Customers);
@@ -107,7 +85,8 @@ public class App implements Testable {
 			stmt.executeUpdate(DROP_TABLE_Own);
 			stmt.executeUpdate(DROP_TABLE_PINs);
 			stmt.executeUpdate(DROP_TABLE_Dates);
-			System.out.println("Tables dropped");
+			stmt.executeUpdate(DROP_TABLE_IDs);
+			System.out.println("All tables dropped!");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			r = "1";
@@ -177,7 +156,13 @@ public class App implements Testable {
 				+ "pin CHAR(4))";
 
 		final String CREATE_TABLE_Dates = "CREATE TABLE Dates ("
-				+ "system_date DATE PRIMARY KEY NOT NULL)";
+				+ "id INTEGER PRIMARY KEY NOT NULL,"
+				+ "value DATE )";
+
+		final String CREATE_TABLE_IDs = "CREATE TABLE IDs ("
+				+ "id INTEGER PRIMARY KEY NOT NULL,"
+				+ "value INTEGER )";
+		final String INIT_IDs = "INSERT INTO IDs VALUES(1, 10000)";
 
 		try {
 			stmt = _connection.createStatement();
@@ -187,6 +172,8 @@ public class App implements Testable {
 			stmt.executeUpdate(CREATE_TABLE_Own);
 			stmt.executeUpdate(CREATE_TABLE_PINs);
 			stmt.executeUpdate(CREATE_TABLE_Dates);
+			stmt.executeUpdate(CREATE_TABLE_IDs);
+			stmt.executeUpdate(INIT_IDs);
 			System.out.println("Tables created");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -219,11 +206,12 @@ public class App implements Testable {
 		Date date = parseDate(date_str);
 
 		final String INSERT_INTO_System_Date = "INSERT INTO Dates "
-				+ "VALUES (?)";
+				+ "VALUES (?,?)";
 
 		try{
 			ps = _connection.prepareStatement(INSERT_INTO_System_Date);
-			ps.setDate(1, new java.sql.Date(date.getTime()));
+			ps.setInt(1, 1);
+			ps.setDate(2, new java.sql.Date(date.getTime()));
 			ps.executeUpdate();
 			System.out.println("Date inserted: " + date_str);
 		}catch(SQLException e){
@@ -358,13 +346,16 @@ public class App implements Testable {
 											+ " WHERE account_id = " + linkedId;
 		final String create_pocket = "INSERT INTO Accounts "
 											+ "(account_id, account_type, balance, primary_owner_id, rate, isClosed, linked_account_id)"
-											+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+											+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 		final String create_transation = "INSERT INTO Transactions "
-												+ "(transaction_id, transaction_type, time, amount, customer_id, from_id, fee, check_number)";
+												+ "(transaction_id, transaction_type, time, amount, customer_id, from_id, to_id)"
+												+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
+		final String query_date = "SELECT * FROM Dates WHERE id = 1";
 
 		try{
 			stmt = _connection.createStatement();
 			ResultSet result = stmt.executeQuery(query);
+			result.next();
 			double balance = result.getDouble("balance");
 			if(balance - 0.01 <= initialTopUp){
 				// Transaction failed due to low balance
@@ -382,8 +373,23 @@ public class App implements Testable {
 				ps.setString(7, linkedId);
 				ps.executeUpdate();
 
+				// Get a id for the new transaction
+				IDCreator idCreator = new IDCreator();
+				int tran_id = idCreator.getNextId();
+
+				// Fetch current date for the new transaction
+				result = stmt.executeQuery(query_date);
+				result.next();
+				Date curr_date = result.getDate("value");
+
 				ps = _connection.prepareStatement(create_transation);
-				//STUB
+				ps.setInt(1, tran_id);
+				ps.setString(2, TransactionType.TOP_UP.toString());
+				ps.setDate(3, new java.sql.Date(curr_date.getTime()));
+				ps.setDouble(4, initialTopUp);
+				ps.setString(5, tin);
+				ps.setString(6, linkedId);
+				ps.setString(7, id);
 				ps.executeUpdate();
 
 			}
@@ -474,15 +480,38 @@ public class App implements Testable {
 		String r = "0 ";
 		double old_balance = 0.00, new_balance = 0.00;
 		Statement stmt = null;
+		PreparedStatement ps = null;
 
 		final String query = "SELECT * FROM Accounts WHERE account_id = " + accountId;
 		try{
 			stmt = _connection.createStatement();
 			ResultSet result = stmt.executeQuery(query);
+			result.next();
 			old_balance = result.getDouble("balance");
 			new_balance = old_balance + amount;
 			final String update = "UPDATE Accounts SET balance = " + Double.toString(new_balance) + " WHERE account_id = " + accountId;
 			stmt.executeUpdate(update);
+
+			// Get a id for the new transaction
+			IDCreator idCreator = new IDCreator();
+			int trans_id = idCreator.getNextId();
+
+			// Fetch current date for the new transaction
+			final String query_date = "SELECT * FROM Dates WHERE id = 1";
+			result = stmt.executeQuery(query_date);
+			result.next();
+			Date curr_date = result.getDate("value");
+
+			final String create_transation = "INSERT INTO Transactions "
+												+ "(transaction_id, transaction_type, time, amount)"
+												+ " VALUES (?, ?, ?, ?)";
+			ps = _connection.prepareStatement(create_transation);
+			ps.setInt(1, trans_id);
+			ps.setString(2, TransactionType.DEPOSIT.toString());
+			ps.setDate(3, new java.sql.Date(curr_date.getTime()));
+			ps.setDouble(4, amount);
+			ps.executeUpdate();
+
 		}catch (SQLException e){
 			e.printStackTrace();
 			r = "1 ";
@@ -520,6 +549,7 @@ public class App implements Testable {
 		try{
 			stmt = _connection.createStatement();
 			ResultSet result = stmt.executeQuery(query);
+			result.next();
 			balance = result.getDouble("balance");
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -562,12 +592,14 @@ public class App implements Testable {
 		try{
 			stmt = _connection.createStatement();
 			ResultSet pocket_result = stmt.executeQuery(query_pocket);
+			pocket_result.next();
 			old_pocket_balance = pocket_result.getDouble("balance");
 			linkedId = pocket_result.getInt("linked_account_id");
 
 			final String query_linked = "SELECT * FROM Accounts WHERE account_id = " + Integer.toString(linkedId);
-			ResultSet lined_result = stmt.executeQuery(query_linked);
-			old_linked_balance = lined_result.getDouble("balance");
+			ResultSet linked_result = stmt.executeQuery(query_linked);
+			linked_result.next();
+			old_linked_balance = linked_result.getDouble("balance");
 
 			if(old_linked_balance - 0.01 <= amount){
 				// Transaction failed due to low balance
@@ -581,6 +613,28 @@ public class App implements Testable {
 				stmt.executeUpdate(update_linked);
 				stmt.executeUpdate(update_pocket);
 				add_on = String.format("%.2f", new_linked_balance) + " " + String.format("%.2f", new_pocket_balance);
+
+				// Get a id for the new transaction
+				IDCreator idCreator = new IDCreator();
+				int trans_id = idCreator.getNextId();
+
+				// Fetch current date for the new transaction
+				final String query_date = "SELECT * FROM Dates WHERE id = 1";
+				ResultSet result_date = stmt.executeQuery(query_date);
+				result_date.next();
+				Date curr_date = result_date.getDate("value");
+
+				final String create_transation = "INSERT INTO Transactions "
+													+ "(transaction_id, transaction_type, time, amount)"
+													+ " VALUES (?, ?, ?, ?)";
+				PreparedStatement ps = _connection.prepareStatement(create_transation);
+				ps = _connection.prepareStatement(create_transation);
+				ps.setInt(1, trans_id);
+				ps.setString(2, TransactionType.TOP_UP.toString());
+				ps.setDate(3, new java.sql.Date(curr_date.getTime()));
+				ps.setDouble(4, amount);
+				ps.executeUpdate();
+
 			}
 
 		}catch (SQLException e){
@@ -621,8 +675,10 @@ public class App implements Testable {
 		try {
 			stmt = _connection.createStatement();
 			ResultSet from_result = stmt.executeQuery(query_from);
+			from_result.next();
 			old_from_balance = from_result.getDouble("balance");
 			ResultSet to_result = stmt.executeQuery(query_to);
+			to_result.next();
 			old_to_balance = to_result.getDouble("balance");
 
 			if(amount > old_from_balance){
@@ -631,11 +687,34 @@ public class App implements Testable {
 			}else{
 				// Transaction proceed
 				new_from_balance = old_from_balance - amount;
-				new_to_balance = new_to_balance + amount;
+				new_to_balance = old_to_balance + amount;
 				final String update_from = "UPDATE Accounts SET balance = " + Double.toString(new_from_balance) + " WHERE account_id = " + from;
 				final String update_to = "UPDATE Accounts SET balance = " + Double.toString(new_to_balance) + " WHERE account_id = " + to;
 				stmt.executeUpdate(update_from);
 				stmt.executeUpdate(update_to);
+
+				// Get a id for the new transaction
+				IDCreator idCreator = new IDCreator();
+				int trans_id = idCreator.getNextId();
+
+				// Fetch current date for the new transaction
+				final String query_date = "SELECT * FROM Dates WHERE id = 1";
+				ResultSet result_date = stmt.executeQuery(query_date);
+				result_date.next();
+				Date curr_date = result_date.getDate("value");
+
+				final String create_transation = "INSERT INTO Transactions "
+											+ "(transaction_id, transaction_type, time, amount, from_id, to_id)"
+											+ " VALUES (?, ?, ?, ?, ?, ?)";
+				PreparedStatement ps = _connection.prepareStatement(create_transation);
+				ps = _connection.prepareStatement(create_transation);
+				ps.setInt(1, trans_id);
+				ps.setString(2, TransactionType.PAY_FRIEND.toString());
+				ps.setDate(3, new java.sql.Date(curr_date.getTime()));
+				ps.setDouble(4, amount);
+				ps.setString(5, from);
+				ps.setString(6, to);
+				ps.executeUpdate();
 
 				if(new_from_balance <= 0.01){
 					// Source account needs to be closed due to a low balance
@@ -658,7 +737,7 @@ public class App implements Testable {
 			}
 		}
 
-		return r + Double.toString(new_to_balance) + " " + Double.toString(new_to_balance);
+		return r + Double.toString(new_from_balance) + " " + Double.toString(new_to_balance);
 	}
 
 
@@ -673,14 +752,14 @@ public class App implements Testable {
 		Statement stmt = null;
 		String r = "0 ";
 		String result = "";
-		String sql = "SELECT * FROM Accounts WHERE isClosed= false ";
+		String sql = "SELECT * FROM Accounts WHERE isClosed= 1 ";
 
 		try {
 			stmt = _connection.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				String aid = rs.getString("account_id");
-				result = aid + result;
+				result = result + " " + aid;
 			}
 			rs.close();
 		} catch (SQLException e) {
@@ -699,10 +778,10 @@ public class App implements Testable {
 		return r + " " + result;
 	}
 
-	public String UpdateStatus(String aid,boolean isClosed){
+	public String UpdateStatus(String aid, int isClosed){
 		String r="0";
 		Statement stmt=null;
-		String sql = "UPDATE Accounts SET isClosed=" + isClosed + " WHERE id=" + aid;
+		String sql = "UPDATE Accounts SET isClosed=" + isClosed + " WHERE account_id=" + aid;
 		try {
 			stmt = _connection.createStatement();
 			stmt.executeUpdate(sql);

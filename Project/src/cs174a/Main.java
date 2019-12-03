@@ -74,14 +74,14 @@ public class Main
 //			System.out.println(r);
 
 
-			//test createPocketAccount
-			r = app.createPocketAccount("53027","12121",500.00,"207843218");
-			System.out.println(r);
+//			//test createPocketAccount				// PASS
+//			r = app.createPocketAccount("53027","12121",500.00,"207843218");
+//			System.out.println(r);
 
-			r = app.createPocketAccount("43947","29107",500.00,"212116070");
-			System.out.println(r);
+//			r = app.createPocketAccount("43947","29107",500.00,"12116070");
+//			System.out.println(r);
 
-//			//test deposit
+//			//test deposit							// PASS
 //			r = app.showBalance("41725");
 //			System.out.println(r);
 //			r = app.deposit("41725",234.56);
@@ -95,14 +95,14 @@ public class Main
 //			System.out.println(r);
 //			r = app.showBalance("43942");
 //			System.out.println(r);
-//
-//			//TEST TOPUP
+
+//			//TEST TOPUP							// PASS
 //			r = app.topUp("53027",200.00);
 //			System.out.println(r);
 //			r = app.topUp("43947", 50.00);
 //			System.out.println(r);
-//
-//			//test payfriend
+
+//			//test payfriend						// PASS
 //			r = app.payFriend("53027","43947",100.00);
 //			System.out.println(r);
 //
@@ -110,13 +110,11 @@ public class Main
 //			System.out.println(r);
 
 
-
-//			r=app.UpdateStatus("12345",1);
+			// test listColsed Accounts				// PASS
+//			r=app.UpdateStatus("12121",1);
 //			System.out.println(r);
-
-			// test listColsed Accounts
-			//	r = app.listClosedAccounts();
-			//	System.out.println( r );
+//			r = app.listClosedAccounts();
+//			System.out.println( r );
 
 
 		}
