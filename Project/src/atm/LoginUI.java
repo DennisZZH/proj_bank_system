@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import cs174a.CustomerDao;
+import cs174a.PinDao;
 import model.Customer;
 
 //step1: username(cid) -> pin -> login -> choose which accounts
@@ -65,20 +66,22 @@ public class LoginUI implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Login")){
             String input = usernameTxt.getText();
+            String pin = pinTxt.getText();
 
             CustomerDao customer = new CustomerDao();
             Customer result = new Customer();
             result = customer.queryCustomerByTaxId(input);
 
-            //PinDao pin = new PinDao();
+            PinDao p = new PinDao();
 
             //1. check if customer already exist;
             if(result != null){
                 //2. check pin
-                if(result.VertifyPin(pinTxt.getText())){
+                if(p.verifyPin(input, pin)){
                     JOptionPane.showMessageDialog(LoginFrame,"Login Successfully!");
                     //ctn to next step: select account
                     AccountSelectUI selection = new AccountSelectUI(input);
+
                     LoginFrame.setVisible(false);
                 }else{
                     JOptionPane.showMessageDialog(LoginFrame,"Wrong PIN");
