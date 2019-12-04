@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import DAO.CustomerDAO;
-import model.Customers;
+import cs174a.CustomerDao;
+import model.Customer;
 
 //step1: username(cid) -> pin -> login -> choose which accounts
 
@@ -66,9 +66,9 @@ public class LoginUI implements ActionListener {
         if(e.getActionCommand().equals("Login")){
             String input = usernameTxt.getText();
 
-            CustomerDAO customer = new CustomerDAO();
-            Customers result = new Customers();
-            result = customer.queryCustomerByTin(input);
+            CustomerDao customer = new CustomerDao();
+            Customer result = new Customer();
+            result = customer.queryCustomerByTaxId(input);
 
             //PinDao pin = new PinDao();
 

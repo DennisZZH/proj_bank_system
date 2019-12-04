@@ -1,5 +1,7 @@
 package AppUI;
 
+import cs174a.AccountDao;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,7 +33,7 @@ public class MenuUI implements ActionListener {
 
     private JButton BackButton;
 
-    //private AccountDao accountAction;
+    private AccountDao accountAction;
     //private Account account;
     private String cid;
 
@@ -71,7 +73,7 @@ public class MenuUI implements ActionListener {
         PayFriendButton.addActionListener(this);
         BackButton.addActionListener(this);
 
-        //accountAction = new AccountDao();
+        accountAction = new AccountDao();
 
 
 
