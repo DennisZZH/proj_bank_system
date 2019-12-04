@@ -80,8 +80,8 @@ public class LoginUI implements ActionListener {
                 if(p.verifyPin(input, pin)){
                     JOptionPane.showMessageDialog(LoginFrame,"Login Successfully!");
                     //ctn to next step: select account
-                    AccountSelectUI selection = new AccountSelectUI(input);
-
+                    //AccountSelectUI selection = new AccountSelectUI(input);
+                    MenuUI m = new MenuUI(input);
                     LoginFrame.setVisible(false);
                 }else{
                     JOptionPane.showMessageDialog(LoginFrame,"Wrong PIN");
