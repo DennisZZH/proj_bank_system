@@ -43,7 +43,7 @@ public class LoginUI implements ActionListener {
         pinTxt = new JPasswordField(20);
         pinPanel.add(pinTxt);
         //initial login button
-        LoginButton = new JButton();
+        LoginButton = new JButton("Login");
         LoginPanel = new JPanel();
         LoginPanel.add(LoginButton);
 
