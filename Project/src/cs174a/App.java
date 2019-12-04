@@ -152,7 +152,7 @@ public class App implements Testable {
 				+ "FOREIGN KEY(account_id) REFERENCES Accounts)";
 
 		final String CREATE_TABLE_PINs = "CREATE TABLE PINs("
-				+ "customer_id VARCHAR(20) PRIMARY KEY NOT NULL,"
+				+ "tax_id VARCHAR(20) PRIMARY KEY NOT NULL,"
 				+ "pin CHAR(4))";
 
 		final String CREATE_TABLE_Dates = "CREATE TABLE Dates ("
@@ -374,8 +374,7 @@ public class App implements Testable {
 				ps.executeUpdate();
 
 				// Get a id for the new transaction
-				IDCreator idCreator = new IDCreator();
-				int tran_id = idCreator.getNextId();
+				int tran_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
 				result = stmt.executeQuery(query_date);
@@ -493,8 +492,7 @@ public class App implements Testable {
 			stmt.executeUpdate(update);
 
 			// Get a id for the new transaction
-			IDCreator idCreator = new IDCreator();
-			int trans_id = idCreator.getNextId();
+			int trans_id = IDCreator.getNextId();
 
 			// Fetch current date for the new transaction
 			final String query_date = "SELECT * FROM Dates WHERE id = 1";
@@ -615,8 +613,7 @@ public class App implements Testable {
 				add_on = String.format("%.2f", new_linked_balance) + " " + String.format("%.2f", new_pocket_balance);
 
 				// Get a id for the new transaction
-				IDCreator idCreator = new IDCreator();
-				int trans_id = idCreator.getNextId();
+				int trans_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
 				final String query_date = "SELECT * FROM Dates WHERE id = 1";
@@ -694,8 +691,7 @@ public class App implements Testable {
 				stmt.executeUpdate(update_to);
 
 				// Get a id for the new transaction
-				IDCreator idCreator = new IDCreator();
-				int trans_id = idCreator.getNextId();
+				int trans_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
 				final String query_date = "SELECT * FROM Dates WHERE id = 1";
