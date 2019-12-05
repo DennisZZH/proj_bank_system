@@ -26,7 +26,7 @@ public class App implements Testable {
 	 * Default constructor.
 	 * DO NOT REMOVE.
 	 */
-	App() {
+	public App() {
 		// TODO: Any actions you need.
 	}
 
@@ -44,7 +44,6 @@ public class App implements Testable {
 			System.err.println(e.getMessage());
 		}
 	}
-
 
 	////////////////////////////// Implement all of the methods given in the interface /////////////////////////////////
 	// Check the Testable.java interface for the function signatures and descriptions.
@@ -126,7 +125,7 @@ public class App implements Testable {
 				+ "linked_account_id VARCHAR(20) DEFAULT NULL,"
 				+ "branch_name VARCHAR(20) DEFAULT NULL,"
 				+ "PRIMARY KEY (account_id),"
-				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers)";
+				+ "FOREIGN KEY (primary_owner_id) REFERENCES Customers) ON DELETE CASCADE";
 
 		final String CREATE_TABLE_Transactions = "CREATE TABLE Transactions ("
 				+ "transaction_id INTEGER,"
@@ -138,9 +137,9 @@ public class App implements Testable {
 				+ "to_id VARCHAR(20),"
 				+ "fee REAL,"
 				+ "check_number VARCHAR2(20),"
-				+ "FOREIGN KEY (customer_id) REFERENCES Customers,"
-				+ "FOREIGN KEY (from_id) REFERENCES Accounts,"
-				+ "FOREIGN KEY (to_id) REFERENCES Accounts,"
+				+ "FOREIGN KEY (customer_id) REFERENCES Customers ON DELETE CASCADE,"
+				+ "FOREIGN KEY (from_id) REFERENCES Accounts ON DELETE CASCADE,"
+				+ "FOREIGN KEY (to_id) REFERENCES Accounts ON DELETE CASCADE,"
 				+ "PRIMARY KEY (transaction_id))";
 
 		final String CREATE_TABLE_Own = "CREATE TABLE Own ("
@@ -148,8 +147,8 @@ public class App implements Testable {
 				+ "account_id VARCHAR(20),"
 				+ "isprimary INTEGER NOT NULL,"
 				+ "PRIMARY KEY (tax_id,account_id),"
-				+ "FOREIGN KEY(tax_id) REFERENCES Customers,"
-				+ "FOREIGN KEY(account_id) REFERENCES Accounts)";
+				+ "FOREIGN KEY(tax_id) REFERENCES Customers ON DELETE CASCADE,"
+				+ "FOREIGN KEY(account_id) REFERENCES Accounts ON DELETE CASCADE)";
 
 		final String CREATE_TABLE_PINs = "CREATE TABLE PINs("
 				+ "tax_id VARCHAR(20) PRIMARY KEY NOT NULL,"

@@ -20,9 +20,9 @@ public class CustomerDao {
         Customer[] customers = new Customer[customerList.size()];
         for (int i = 0; i < customers.length; i++) {
             Customer customer = new Customer();
-            customer.setId((String) customerList.get(i).get("tax_id"));
-            customer.setName((String) customerList.get(i).get("name"));
-            customer.setAddress((String) customerList.get(i).get("address"));
+            customer.setId((String) customerList.get(i).get("TAX_ID"));
+            customer.setName((String) customerList.get(i).get("NAME"));
+            customer.setAddress((String) customerList.get(i).get("ADDRESS"));
             customers[i] = customer;
         }
         return customers;
@@ -34,9 +34,9 @@ public class CustomerDao {
         if(customerList == null || customerList.size() == 0)
             return null;
         Customer customer = new Customer();
-        customer.setId((String) customerList.get(0).get("tax_id"));
-        customer.setName((String) customerList.get(0).get("name"));
-        customer.setAddress((String) customerList.get(0).get("address"));
+        customer.setId((String) customerList.get(0).get("TAX_ID"));
+        customer.setName((String) customerList.get(0).get("NAME"));
+        customer.setAddress((String) customerList.get(0).get("ADDRESS"));
         return customer;
     }
 
@@ -52,6 +52,16 @@ public class CustomerDao {
     public Customer[] queryCustomerByAccountId(String accountId){
         String sql = "SELECT * FROM Customers WHERE tax_id in (SELECT Own.tax_id FROM Own WHERE account_id = " + accountId;
         return doQueryCustomersSQL(sql);
+    }
+
+    public Customer[] queryCustomerWithoutAccount(){
+        String sql = "SELECT * FROM Customers WHERE tax_id not in (SELECT Own.tax_id from Own where Own.tax_id = Customers.tax_id)";
+        return doQueryCustomersSQL(sql);
+    }
+
+    public boolean deleteCustomerWithouAccount(){
+        String sql = "DELETE FROM Customers WHERE tax_id not in (SELECT Own.tax_id from Own where Own.tax_id = Customers.tax_id)";
+        return dbExecutor.runUpdate(sql);
     }
 
 
