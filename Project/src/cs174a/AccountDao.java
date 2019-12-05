@@ -91,6 +91,11 @@ public class AccountDao {
         return dbExecutor.runUpdate(sql);
     }
 
+    public boolean updateBranchName(String branch_name, String accountId){
+        String sql = "UPDATE Accounts SET branch_name = " + branch_name + " WHERE account_id = " + accountId;
+        return dbExecutor.runUpdate(sql);
+    }
+
     public boolean updateState(String accountId, int isClosed){
         String sql = "UPDATE Accounts SET isClosed = " + isClosed + " WHERE account_id = " + accountId;
         return dbExecutor.runUpdate(sql);

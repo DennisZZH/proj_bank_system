@@ -33,15 +33,15 @@ public class TransactionDao {
         Transaction[] transactions = new Transaction[transactionList.size()];
         for (int i = 0; i < transactions.length; i++) {
             Transaction transaction = new Transaction();
-            transaction.setId((Integer) transactionList.get(i).get("transaction_id"));
-            transaction.setType(TransactionType.valueOf((String) transactionList.get(i).get("transaction_type")));
-            transaction.setTime((Date) transactionList.get(i).get("time"));
-            transaction.setAmount((Double) transactionList.get(i).get("amount"));
-            transaction.setCustomer_id((String) transactionList.get(i).get("customer_id"));
-            transaction.setFrom_id((String) transactionList.get(i).get("from_id"));
-            transaction.setTo_id((String) transactionList.get(i).get("to_id"));
-            transaction.setFee((Double)transactionList.get(i).get("fee"));
-            transaction.setCheck_number((String) transactionList.get(i).get("check_number"));
+            transaction.setId((Integer) transactionList.get(i).get("TRANSACTION_ID"));
+            transaction.setType(TransactionType.valueOf((String) transactionList.get(i).get("TRANSACTION_TYPE")));
+            transaction.setTime((Date) transactionList.get(i).get("TIME"));
+            transaction.setAmount((Double) transactionList.get(i).get("AMOUNT"));
+            transaction.setCustomer_id((String) transactionList.get(i).get("CUSTOMER_ID"));
+            transaction.setFrom_id((String) transactionList.get(i).get("FROM_ID"));
+            transaction.setTo_id((String) transactionList.get(i).get("TO_ID"));
+            transaction.setFee((Double)transactionList.get(i).get("FEE"));
+            transaction.setCheck_number((String) transactionList.get(i).get("CHECK_NUMBER"));
             transactions[i] = transaction;
         }
         return transactions;

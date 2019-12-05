@@ -4,7 +4,7 @@
  */
 package cs174a;                         // THE BASE PACKAGE FOR YOUR APP MUST BE THIS ONE.
 
-interface Testable
+public interface Testable
 {
 	/////////////////////////////////////// Data types used across testing functions ///////////////////////////////////
 

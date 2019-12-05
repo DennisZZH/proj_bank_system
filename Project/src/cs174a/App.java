@@ -26,7 +26,7 @@ public class App implements Testable {
 	 * Default constructor.
 	 * DO NOT REMOVE.
 	 */
-	App() {
+	public App() {
 		// TODO: Any actions you need.
 	}
 
@@ -44,7 +44,6 @@ public class App implements Testable {
 			System.err.println(e.getMessage());
 		}
 	}
-
 
 	////////////////////////////// Implement all of the methods given in the interface /////////////////////////////////
 	// Check the Testable.java interface for the function signatures and descriptions.

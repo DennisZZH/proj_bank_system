@@ -12,7 +12,7 @@ public class DateDao {
         String sql_getTime = "SELECT * FROM Dates";
         List<Map<String, Object>> time = dbExecutor.query(sql_getTime);
         // Get current days
-        Integer currentTime = (Integer)time.get(0).get("value");
+        Integer currentTime = (Integer)time.get(0).get("VALUE");
         return Integer.valueOf(currentTime.toString());
     }
 
