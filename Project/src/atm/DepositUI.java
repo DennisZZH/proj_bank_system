@@ -1,5 +1,6 @@
 package atm;
 
+import cs174a.AccountDao;
 import model.Account;
 
 import javax.swing.*;
@@ -47,6 +48,17 @@ public class DepositUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Confirm")){
+            AccountDao a = new AccountDao();
+            Double money = Double.parseDouble(amountText.getText());
+            Double currentBalance = account.getBalance();
+            currentBalance = currentBalance + money;
+            a.updateBalance(account.getId(),currentBalance);
+            account.getBalance(currentBalance);
+
+
+        }
+
 
     }
 }

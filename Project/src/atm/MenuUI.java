@@ -59,6 +59,7 @@ public class MenuUI implements ActionListener {
         appPanel.setLayout(new GridLayout(5,2,20,20));
 
         appFrame.add(appPanel);
+
         appFrame.setVisible(true);
         appFrame.setLayout(new FlowLayout());
         appFrame.setBounds(300,300,350,400);
@@ -83,28 +84,28 @@ public class MenuUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-        switch(command) {
-            case "Back":
-                return;
-            case "Deposit":
-                return;
-            case "Top Up":
-                return;
-            case "Withdrawal":
-                return;
-            case "Purchase":
-                return;
-            case "Transfer":
-                return;
-            case "Collect":
-                return;
-            case "Wire":
-                return;
-            case "Pay Friend":
-                return;
-
-        }
+//        String command = e.getActionCommand();
+//        switch(command) {
+//            case "Back":
+//                return;
+//            case "Deposit":
+//                return;
+//            case "Top Up":
+//                return;
+//            case "Withdrawal":
+//                return;
+//            case "Purchase":
+//                return;
+//            case "Transfer":
+//                return;
+//            case "Collect":
+//                return;
+//            case "Wire":
+//                return;
+//            case "Pay Friend":
+//                return;
+//
+//        }
 
     }
 }
