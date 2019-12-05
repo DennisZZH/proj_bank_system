@@ -1,7 +1,11 @@
 package atm;
 
 import cs174a.AccountDao;
+import cs174a.DateDao;
+import cs174a.TransactionDao;
 import model.Account;
+import model.Transaction;
+import model.TransactionType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,14 +55,29 @@ public class DepositUI implements ActionListener {
         if(e.getActionCommand().equals("Confirm")){
             AccountDao a = new AccountDao();
             Double money = Double.parseDouble(amountText.getText());
+            //need convertion
             Double currentBalance = account.getBalance();
             currentBalance = currentBalance + money;
             a.updateBalance(account.getId(),currentBalance);
             account.setBalance(currentBalance);
 
+            Transaction t = new Transaction();
+            t.setTime(DateDao.getCurrentTime());
+            t.setType(TransactionType.DEPOSIT);
+            t.setCustomer_id(customerId);
+            t.setFrom_id(account.getId());
+            t.setTo_id(account.getId());
+            t.setAmount(money);
+            t.setFee(0.00);
+            t.setCheck_number(null);
+
+            TransactionDao actionadd = new TransactionDao();
+            actionadd.addTransaction(t);
+
+            JOptionPane.showMessageDialog(depositFrame,"Deposit succeed! Your current balance is : $"+currentBalance);
+            depositFrame.setVisible(false);
 
         }
-
 
     }
 }

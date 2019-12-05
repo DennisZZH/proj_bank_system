@@ -14,9 +14,9 @@ import java.util.Properties;
  */
 public class DBConnector {
 
-    private final static String DB_USER = "c##zihaozhang";
+    private final static String DB_USER = "c##huanhua_xu";
 
-    private final static String DB_PASSWORD = "8862062";
+    private final static String DB_PASSWORD = "5198593";
 
     private final static String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
 

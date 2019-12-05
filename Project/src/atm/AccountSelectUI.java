@@ -36,7 +36,7 @@ public class AccountSelectUI extends JPanel{
             accountsPanel.add(new Label("Closed"));
             int count = 0;
             for (int i = 0; i < accounts.length; i++) {
-                if((accounts[i].getType() == AccountType.POCKET_ACCOUNT)){
+               // if((accounts[i].getType() == AccountType.POCKET_ACCOUNT)){
                         count++;
                         accountsPanel.add(new Label(accounts[i].getId()));
                         accountsPanel.add(new Label(accounts[i].getType().toString()));
@@ -44,7 +44,7 @@ public class AccountSelectUI extends JPanel{
                         accountsPanel.add(new Label(Double.toString(accounts[i].getBalance())));
                         accountsPanel.add(new Label(Integer.toString(accounts[i].isClosed())));
 
-                }
+                //}
             }
             accountsPanel.setLayout(new GridLayout(count + 1, 5));
             accountsPanel.setVisible(true);
@@ -57,7 +57,5 @@ public class AccountSelectUI extends JPanel{
         }
     }
 
-    public static void main(String[] args) {
-        //System.out.println(JOptionPane.showInputDialog(new AccountSelectUI("361721022")));
-    }
+
 }

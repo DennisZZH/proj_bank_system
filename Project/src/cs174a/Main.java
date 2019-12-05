@@ -36,9 +36,9 @@ public class Main
 //			r = app.dropTables();
 //			System.out.println(r);
 //
-//			//test createTables						// PASS
-//			r = app.createTables();
-//			System.out.println(r);
+			//test createTables						// PASS
+			r = app.createTables();
+			System.out.println(r);
 //
 //
 //			//test setDate							// PASS
