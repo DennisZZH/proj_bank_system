@@ -103,12 +103,13 @@ public class CreateAccountUI  extends JPanel implements ActionListener {
             // If create a pocket account
             if (isPocket == 0) {
                 this.add(linkAccountPanel);
+                line = 5;
             } else {
                 this.add(accountTypePanel);
+                this.add(bankBranchPanel);
             }
-            this.add(bankBranchPanel);
-            this.add(confirmPanel);
             this.add(moneyPanel);
+            this.add(confirmPanel);
             line = 6;
         } else if (isPrimary == 1) {
             this.add(customerPanel);
@@ -145,6 +146,7 @@ public class CreateAccountUI  extends JPanel implements ActionListener {
                     // Reset Pin
                     PinDao pinDao = new PinDao();
                     pinDao.setPin(customerId, "1717", pin);
+                    System.out.println(pin);
                 }
                 String id = accountField.getText();
                 String linked_account_id = null;
@@ -170,7 +172,7 @@ public class CreateAccountUI  extends JPanel implements ActionListener {
                 App app = new App();
                 app.initializeSystem();
                 String result;
-                if(isPocket == 0){
+                if(isPocket == 1){
                     accountDao.updateBranchName(bank_branch_name, id);
                     result = app.createCheckingSavingsAccount(type, id, balance, customerId, "known", "known");
                 }else{
@@ -195,6 +197,7 @@ public class CreateAccountUI  extends JPanel implements ActionListener {
                         // Reset Pin
                         PinDao pinDao = new PinDao();
                         pinDao.setPin(tax_id, "1717", pin);
+                        System.out.println(pin);
                     }
                     OwnDao ownDao = new OwnDao();
 ;                   ownDao.addRelation(tax_id, id, 0);
@@ -227,9 +230,10 @@ public class CreateAccountUI  extends JPanel implements ActionListener {
                         // Reset Pin
                         PinDao pinDao = new PinDao();
                         pinDao.setPin(customerId, "1717", pin);
+                        System.out.println(pin);
                     }
-                    OwnDao custAccoDao = new OwnDao();
-                    custAccoDao.addRelation(customerId, account.getId(), 0);
+                    OwnDao ownDao = new OwnDao();
+                    ownDao.addRelation(customerId, account.getId(), 0);
                     JOptionPane.showMessageDialog(this,"Co-owner account set up successfully!");
                 }
             }

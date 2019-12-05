@@ -54,5 +54,15 @@ public class CustomerDao {
         return doQueryCustomersSQL(sql);
     }
 
+    public Customer[] queryCustomerWithoutAccount(){
+        String sql = "SELECT * FROM Customers WHERE tax_id not in (SELECT Own.tax_id from Own where Own.tax_id = Customers.tax_id)";
+        return doQueryCustomersSQL(sql);
+    }
+
+    public boolean deleteCustomerWithouAccount(){
+        String sql = "DELETE FROM Customers WHERE tax_id not in (SELECT Own.tax_id from Own where Own.tax_id = Customers.tax_id)";
+        return dbExecutor.runUpdate(sql);
+    }
+
 
 }

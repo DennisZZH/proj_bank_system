@@ -32,7 +32,7 @@ public class PinDao {
 
     public boolean setPin(String customerId, String oldPin, String newPin){
         if(verifyPin(customerId, oldPin)){
-            String sql = "UPDATE PINs SET pin = " + newPin + " WHERE tax_id = " + customerId;
+            String sql = "UPDATE PINs SET pin = " + "'" + newPin + "'" + " WHERE tax_id = " + "'" + customerId + "'";
             return dbExecutor.runUpdate(sql);
         }
         return false;

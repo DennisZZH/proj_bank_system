@@ -36,7 +36,7 @@ public class AccountSelectUI extends JPanel{
             accountsPanel.add(new Label("Closed"));
             int count = 0;
             for (int i = 0; i < accounts.length; i++) {
-                if((accounts[i].getType() == AccountType.POCKET_ACCOUNT)){
+                if((accounts[i].getType() == AccountType.POCKET)){
                         count++;
                         accountsPanel.add(new Label(accounts[i].getId()));
                         accountsPanel.add(new Label(accounts[i].getType().toString()));

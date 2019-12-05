@@ -3,6 +3,7 @@ package cs174a;
 import model.Account;
 import model.AccountType;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +33,10 @@ public class AccountDao {
             Account account = new Account();
             account.setId((String) accountList.get(i).get("ACCOUNT_ID"));
             account.setType(AccountType.translate((String) accountList.get(i).get("ACCOUNT_TYPE")));
-            account.setBalance((Double) accountList.get(i).get("BALANCE"));
-            account.setPrimaryOwner((String) accountList.get(i).get("PRIMARY_OWNER_ID"));
-            account.setRate((Double) accountList.get(i).get("RATE"));
-            account.setIsClosed((Integer) accountList.get(i).get("ISCLOSED"));
+            account.setBalance( ( (BigDecimal) accountList.get(0).get("BALANCE") ).doubleValue());
+            account.setPrimaryOwner((String) accountList.get(0).get("PRIMARY_OWNER_ID"));
+            account.setRate(( (BigDecimal) accountList.get(0).get("RATE") ).doubleValue());
+            account.setIsClosed(( (BigDecimal) accountList.get(0).get("ISCLOSED") ).intValue());
             account.setLinkedID((String) accountList.get(i).get("LINKED_ACCOUNT_ID"));
             account.setBranch_name((String) accountList.get(i).get("BRANCH_NAME"));
 
@@ -52,10 +53,10 @@ public class AccountDao {
         Account account = new Account();
         account.setId(id);
         account.setType(AccountType.translate((String) accountList.get(0).get("ACCOUNT_TYPE")));
-        account.setBalance((Double) accountList.get(0).get("BALANCE"));
+        account.setBalance( ( (BigDecimal) accountList.get(0).get("BALANCE") ).doubleValue());
         account.setPrimaryOwner((String) accountList.get(0).get("PRIMARY_OWNER_ID"));
-        account.setRate((Double) accountList.get(0).get("RATE"));
-        account.setIsClosed((Integer) accountList.get(0).get("ISCLOSED"));
+        account.setRate(( (BigDecimal) accountList.get(0).get("RATE") ).doubleValue());
+        account.setIsClosed(( (BigDecimal) accountList.get(0).get("ISCLOSED") ).intValue());
         account.setLinkedID((String) accountList.get(0).get("LINKED_ACCOUNT_ID"));
         account.setBranch_name((String) accountList.get(0).get("BRANCH_NAME"));
         return account;
@@ -87,17 +88,17 @@ public class AccountDao {
     }
 
     public boolean updateBalance(String accountId, Double newBalance){
-        String sql = "UPDATE Accounts SET balance = " + Double.toString(newBalance) + " WHERE account_id = " + accountId;
+        String sql = "UPDATE Accounts SET balance = '" + Double.toString(newBalance) + "' WHERE account_id = '" + accountId + "'";
         return dbExecutor.runUpdate(sql);
     }
 
     public boolean updateBranchName(String branch_name, String accountId){
-        String sql = "UPDATE Accounts SET branch_name = " + branch_name + " WHERE account_id = " + accountId;
+        String sql = "UPDATE Accounts SET branch_name = " + "'" + branch_name +"'" + " WHERE account_id = " + "'" + accountId + "'";
         return dbExecutor.runUpdate(sql);
     }
 
     public boolean updateState(String accountId, int isClosed){
-        String sql = "UPDATE Accounts SET isClosed = " + isClosed + " WHERE account_id = " + accountId;
+        String sql = "UPDATE Accounts SET isClosed = '" + isClosed + "' WHERE account_id = '" + accountId + "'";
         return dbExecutor.runUpdate(sql);
     }
 
