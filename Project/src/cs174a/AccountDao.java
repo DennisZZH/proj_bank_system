@@ -30,14 +30,14 @@ public class AccountDao {
         Account[] accounts = new Account[accountList.size()];
         for (int i = 0; i < accounts.length; i++) {
             Account account = new Account();
-            account.setId((String) accountList.get(i).get("account_id"));
-            account.setType(AccountType.translate((String) accountList.get(i).get("account_type")));
-            account.setBalance((Double) accountList.get(i).get("balance"));
-            account.setPrimaryOwner((String) accountList.get(i).get("primary_owner_id"));
-            account.setRate((Double) accountList.get(i).get("rate"));
-            account.setIsClosed((Integer) accountList.get(i).get("isClosed"));
-            account.setLinkedID((String) accountList.get(i).get("linked_account_id"));
-            account.setBranch_name((String) accountList.get(i).get("branch_name"));
+            account.setId((String) accountList.get(i).get("ACCOUNT_ID"));
+            account.setType(AccountType.translate((String) accountList.get(i).get("ACCOUNT_TYPE")));
+            account.setBalance((Double) accountList.get(i).get("BALANCE"));
+            account.setPrimaryOwner((String) accountList.get(i).get("PRIMARY_OWNER_ID"));
+            account.setRate((Double) accountList.get(i).get("RATE"));
+            account.setIsClosed((Integer) accountList.get(i).get("ISCLOSED"));
+            account.setLinkedID((String) accountList.get(i).get("LINKED_ACCOUNT_ID"));
+            account.setBranch_name((String) accountList.get(i).get("BRANCH_NAME"));
 
             accounts[i] = account;
         }
@@ -51,13 +51,13 @@ public class AccountDao {
             return null;
         Account account = new Account();
         account.setId(id);
-        account.setType(AccountType.translate((String) accountList.get(0).get("account_type")));
-        account.setBalance((Double) accountList.get(0).get("balance"));
-        account.setPrimaryOwner((String) accountList.get(0).get("primary_owner_id"));
-        account.setRate((Double) accountList.get(0).get("rate"));
-        account.setIsClosed((Integer) accountList.get(0).get("isClosed"));
-        account.setLinkedID((String) accountList.get(0).get("linked_account_id"));
-        account.setBranch_name((String) accountList.get(0).get("branch_name"));
+        account.setType(AccountType.translate((String) accountList.get(0).get("ACCOUNT_TYPE")));
+        account.setBalance((Double) accountList.get(0).get("BALANCE"));
+        account.setPrimaryOwner((String) accountList.get(0).get("PRIMARY_OWNER_ID"));
+        account.setRate((Double) accountList.get(0).get("RATE"));
+        account.setIsClosed((Integer) accountList.get(0).get("ISCLOSED"));
+        account.setLinkedID((String) accountList.get(0).get("LINKED_ACCOUNT_ID"));
+        account.setBranch_name((String) accountList.get(0).get("BRANCH_NAME"));
         return account;
     }
 
