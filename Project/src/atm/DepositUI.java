@@ -54,7 +54,7 @@ public class DepositUI implements ActionListener {
             Double currentBalance = account.getBalance();
             currentBalance = currentBalance + money;
             a.updateBalance(account.getId(),currentBalance);
-            account.getBalance(currentBalance);
+            account.setBalance(currentBalance);
 
 
         }

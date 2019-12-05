@@ -157,7 +157,7 @@ public class MainUI implements ActionListener {
             repaint(new DeleteTransactionsUI());
         }
         else if(e.getActionCommand().equals("Add Time")){
-            repaint(new AddTimeUI());
+            repaint(new SetDateUI());
         }
         else if(e.getActionCommand().equals("Back")){
             buttonPanel.setVisible(true);

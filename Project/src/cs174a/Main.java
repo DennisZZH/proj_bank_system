@@ -2,6 +2,7 @@ package cs174a;                         // THE BASE PACKAGE FOR YOUR APP MUST BE
 
 // DO NOT REMOVE THIS IMPORT.
 import atm.LoginUI;
+import bankteller.MainUI;
 import cs174a.Testable.*;
 
 import java.sql.SQLOutput;
@@ -117,7 +118,8 @@ public class Main
 //			r = app.listClosedAccounts();
 //			System.out.println( r );
 
-			LoginUI login = new LoginUI();
+			LoginUI atm = new LoginUI();
+			MainUI bankteller = new MainUI();
 		}
 	}
 	//!### FINALIZAMOS
