@@ -288,6 +288,10 @@ public class App implements Testable {
 				ps.setString(2, name);
 				ps.setString(3, address);
 				ps.executeUpdate();
+
+				PinDao pindao = new PinDao();
+				pindao.initialPin(tin);
+
 			}
 			ps = _connection.prepareStatement(INSERT_INTO_Accounts);
 			ps.setString(1, id);
@@ -447,6 +451,9 @@ public class App implements Testable {
 			ps.setString(2, accountId);
 			ps.setInt(3, 0);
 			ps.executeUpdate();
+
+			PinDao pindao = new PinDao();
+			pindao.initialPin(tin);
 
 		}catch (SQLException e){
 			e.printStackTrace();

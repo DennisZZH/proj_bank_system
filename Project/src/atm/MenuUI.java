@@ -1,6 +1,7 @@
 package atm;
 
 import cs174a.AccountDao;
+import model.Account;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,14 +31,14 @@ public class MenuUI implements ActionListener {
     private JButton CollectButton;
     private JButton WireButton;
     private JButton PayFriendButton;
-
     private JButton BackButton;
 
     private AccountDao accountAction;
-    //private Account account;
+    private Account account;
     private String cid;
 
     public MenuUI(String cid){
+
         this.cid=cid;
         //initial frame
         appFrame = new JFrame("ATM-App");
@@ -54,8 +55,18 @@ public class MenuUI implements ActionListener {
         PayFriendButton = new JButton("Pay Friend");
         BackButton = new JButton("Back");
 
-
         //set layout
+        appPanel = new JPanel();
+        appPanel.add(DepositButton);
+        appPanel.add(TopUpButtoon);
+        appPanel.add(WithDrawalButton);
+        appPanel.add(PurchaseButton);
+        appPanel.add(TransferButton);
+        appPanel.add(CollectButton);
+        appPanel.add(WireButton);
+        appPanel.add(PayFriendButton);
+        appPanel.add(BackButton);
+
         appPanel.setLayout(new GridLayout(5,2,20,20));
 
         appFrame.add(appPanel);
@@ -73,10 +84,7 @@ public class MenuUI implements ActionListener {
         WireButton.addActionListener(this);
         PayFriendButton.addActionListener(this);
         BackButton.addActionListener(this);
-
         accountAction = new AccountDao();
-
-
 
     }
 

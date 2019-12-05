@@ -22,7 +22,9 @@ public class PinDao {
         String sql = "SELECT * FROM PINs WHERE tax_id = " + customerId;
         List<Map<String, Object>> list = dbExecutor.query(sql);
         if(list != null && list.size() != 0){
-            String exactPin = (String)list.get(0).get("pin");
+            String exactPin = (String)list.get(0).get("PIN");
+            System.out.println(exactPin);
+            System.out.println(pin);
             return exactPin.equals(pin);
         }
         return false;

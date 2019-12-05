@@ -34,18 +34,18 @@ public class Main
 //			//test dropTables						// PASS
 //			r = app.dropTables();
 //			System.out.println(r);
-
+//
 //			//test createTables						// PASS
 //			r = app.createTables();
 //			System.out.println(r);
-
-
+//
+//
 //			//test setDate							// PASS
 //			r = app.setDate(2011,3,1);
 //			System.out.println(r);
-
-
-
+//
+//
+//
 //			// test createCheckingSavingsAccount	// PASS
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "41725", 1234.56, "201674933", "George Brush", "5346 Foothill Av" );
 //			System.out.println( r );
@@ -64,24 +64,24 @@ public class Main
 //
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "29107", 3000.00, "209378521", "known", "known" );
 //			System.out.println( r );
-
-
-
+//
+//
+//
 //			//test createCustomer					// PASS
 //			r = app.createCustomer("29107","12116070","Li Kung","2 People's Rd Beijing");
 //			System.out.println(r);
 //
 //			r = app.createCustomer("17431","412231856","Cindy Laugher","7000 Hollister");
 //			System.out.println(r);
-
-
+//
+//
 //			//test createPocketAccount				// PASS
 //			r = app.createPocketAccount("53027","12121",500.00,"207843218");
 //			System.out.println(r);
-
+//
 //			r = app.createPocketAccount("43947","29107",500.00,"12116070");
 //			System.out.println(r);
-
+//
 //			//test deposit							// PASS
 //			r = app.showBalance("41725");
 //			System.out.println(r);
@@ -96,22 +96,22 @@ public class Main
 //			System.out.println(r);
 //			r = app.showBalance("43942");
 //			System.out.println(r);
-
+//
 //			//TEST TOPUP							// PASS
 //			r = app.topUp("53027",200.00);
 //			System.out.println(r);
 //			r = app.topUp("43947", 50.00);
 //			System.out.println(r);
-
+//
 //			//test payfriend						// PASS
 //			r = app.payFriend("53027","43947",100.00);
 //			System.out.println(r);
 //
 //			r = app.payFriend("43947","53027",77.00);
 //			System.out.println(r);
-
-
-			// test listColsed Accounts				// PASS
+//
+//
+//			 //test listColsed Accounts				// PASS
 //			r=app.UpdateStatus("12121",1);
 //			System.out.println(r);
 //			r = app.listClosedAccounts();
