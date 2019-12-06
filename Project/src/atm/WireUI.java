@@ -1,4 +1,4 @@
-package AppUI;
+package atm;
 
 import model.Account;
 

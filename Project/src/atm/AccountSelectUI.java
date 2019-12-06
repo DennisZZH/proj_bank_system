@@ -28,23 +28,34 @@ public class AccountSelectUI extends JPanel{
         AccountDao accountDao = new AccountDao();
         // Get all accounts belong to current customer
         accounts = accountDao.queryAccountByCustomerId(taxId);
+
         if(accounts != null && accounts.length != 0){
             accountsPanel.add(new Label("Account Id"));
             accountsPanel.add(new Label("Account Type"));
             accountsPanel.add(new Label("Bank Branch Name"));
             accountsPanel.add(new Label("Balance"));
             accountsPanel.add(new Label("Closed"));
+
             int count = 0;
             for (int i = 0; i < accounts.length; i++) {
-                if((accounts[i].getType() == AccountType.POCKET)){
+               // if((accounts[i].getType() == AccountType.POCKET_ACCOUNT)){
+
                         count++;
                         accountsPanel.add(new Label(accounts[i].getId()));
-                        accountsPanel.add(new Label(accounts[i].getType().toString()));
-                        accountsPanel.add(new Label(accounts[i].getBranchName()));
+                        System.out.println(String.valueOf(accounts[i].getType()));
+                        accountsPanel.add(new Label(String.valueOf(accounts[i].getType())));
+
+                        if(accounts[i].getBranchName() == null){
+                            accountsPanel.add(new Label("unknown"));
+                        }else{
+                            accountsPanel.add(new Label(accounts[i].getBranchName()));
+                        }
+
                         accountsPanel.add(new Label(Double.toString(accounts[i].getBalance())));
                         accountsPanel.add(new Label(Integer.toString(accounts[i].isClosed())));
 
-                }
+
+                //}
             }
             accountsPanel.setLayout(new GridLayout(count + 1, 5));
             accountsPanel.setVisible(true);
@@ -57,7 +68,5 @@ public class AccountSelectUI extends JPanel{
         }
     }
 
-    public static void main(String[] args) {
-        //System.out.println(JOptionPane.showInputDialog(new AccountSelectUI("361721022")));
-    }
+
 }

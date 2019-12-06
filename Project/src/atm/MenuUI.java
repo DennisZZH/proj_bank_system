@@ -53,7 +53,7 @@ public class MenuUI implements ActionListener {
         CollectButton = new JButton("Collect");
         WireButton = new JButton("Wire");
         PayFriendButton = new JButton("Pay Friend");
-        BackButton = new JButton("Back");
+        BackButton = new JButton("Logout");
 
         //set layout
         appPanel = new JPanel();
@@ -92,28 +92,42 @@ public class MenuUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        String command = e.getActionCommand();
-//        switch(command) {
-//            case "Back":
-//                return;
-//            case "Deposit":
-//                return;
-//            case "Top Up":
-//                return;
-//            case "Withdrawal":
-//                return;
-//            case "Purchase":
-//                return;
-//            case "Transfer":
-//                return;
-//            case "Collect":
-//                return;
-//            case "Wire":
-//                return;
-//            case "Pay Friend":
-//                return;
-//
-//        }
+        String command = e.getActionCommand();
+        String aid = JOptionPane.showInputDialog(new AccountSelectUI(cid));
+        if(aid == null)
+            return;
+        this.account= accountAction.queryAccountById(aid);
+        if(account.isClosed()==1){
+            JOptionPane.showMessageDialog(appFrame, "Sorry, this account is closed!");
+        }else{
+            switch(command) {
+                case "Logout":
+                    appFrame.setVisible(false);
+                    LoginUI renew = new LoginUI();
+                    return;
+                case "Deposit":
+                    DepositUI depositUI = new DepositUI(account,cid);
+                    return;
+                case "Top Up":
+                    return;
+                case "Withdrawal":
+                    WithDrawalUI withDrawalUI = new WithDrawalUI(account,cid);
+                    return;
+                case "Purchase":
+                    return;
+                case "Transfer":
+                    return;
+                case "Collect":
+                    return;
+                case "Wire":
+                    return;
+                case "Pay Friend":
+                    return;
+
+            }
+        }
+
+
 
     }
 }

@@ -1,7 +1,12 @@
 package atm;
 
 import cs174a.AccountDao;
+import cs174a.App;
+import cs174a.DateDao;
+import cs174a.TransactionDao;
 import model.Account;
+import model.Transaction;
+import model.TransactionType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,16 +54,18 @@ public class DepositUI implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Confirm")){
-            AccountDao a = new AccountDao();
             Double money = Double.parseDouble(amountText.getText());
-            Double currentBalance = account.getBalance();
-            currentBalance = currentBalance + money;
-            a.updateBalance(account.getId(),currentBalance);
-            account.setBalance(currentBalance);
+            String result;
 
+            App app = new App();
+            result = app.deposit(account.getId(), money);
 
+            if(result.charAt(0) == 0){
+                JOptionPane.showMessageDialog(depositFrame,"Deposit succeed!");
+            }else{
+                JOptionPane.showMessageDialog(depositFrame,"Deposit failed!");
+            }
+            depositFrame.setVisible(false);
         }
-
-
     }
 }

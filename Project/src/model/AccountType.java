@@ -7,13 +7,13 @@ public enum  AccountType {
     POCKET;
 
     public static AccountType translate(String type){
-        if(type.equals("STUDENT_CHECKING_ACCOUNT"))
+        if(type.equals("STUDENT_CHECKING"))
             return STUDENT_CHECKING;
-        if(type.equals("INTEREST_CHECKING_ACCOUNT"))
+        if(type.equals("INTEREST_CHECKING"))
             return INTEREST_CHECKING;
-        if(type.equals("SAVING_ACCOUNT"))
+        if(type.equals("SAVING"))
             return SAVINGS;
-        if(type.equals("POCKET_ACCOUNT"))
+        if(type.equals("POCKET"))
             return POCKET;
         return null;
     }
