@@ -21,7 +21,7 @@ public class TransactionDao {
         // Need to translate the date in java to oracle
         java.util.Date sysDate = transaction.getTime();
         java.sql.Date date = new java.sql.Date(sysDate.getTime());
-        String sql = "INSERT INTO transactions VALUES(?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO transactions VALUES(?,?,?,?,?,?,?,?,?)";
         Object[] objects = {IDCreator.getNextId(), transaction.getType().toString(), date, transaction.getAmount(), transaction.getCustomer_id(), transaction.getFrom_id(), transaction.getTo_id(), transaction.getFee(), transaction.getCheck_number()};
         return dbExecutor.runUpdate(sql, objects);
     }
@@ -60,14 +60,14 @@ public class TransactionDao {
 
     public Transaction[] queryTransactionsDuringCurrentMonth(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        String date = sdf.format(DateDao.getCurrentTime());
+        String date = sdf.format(DateDao.getCurrentDate());
         String sql = "SELECT * FROM Transactions WHERE TO_CHAR(time,'yyyy-MM') = " + date;
         return doQueryAccountsSQL(sql);
     }
 
     public Transaction[] queryTransactionsDuringCurrentMonthWithAccountId(String accountId){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        String date = sdf.format(DateDao.getCurrentTime());
+        String date = sdf.format(DateDao.getCurrentDate());
         String sql = "SELECT * FROM Transactions WHERE (from_id = " + accountId + " OR to_id = " + accountId + ") AND TO_CHAR(time,'yyyy-MM') = " + date;
         return doQueryAccountsSQL(sql);
     }

@@ -2,6 +2,7 @@ package atm;
 
 import cs174a.AccountDao;
 import cs174a.DateDao;
+import cs174a.IDCreator;
 import cs174a.TransactionDao;
 import model.Account;
 import model.Transaction;
@@ -64,13 +65,16 @@ public class WithDrawalUI implements ActionListener {
                 a.updateBalance(account.getId(), currentBalance);
                 account.setBalance(currentBalance);
 
+                int trans_id = IDCreator.getNextId();
+
                 Transaction t = new Transaction();
-                t.setTime(DateDao.getCurrentTime());
+                t.setId(trans_id);
                 t.setType(TransactionType.WITHDRAWAL);
+                t.setTime(DateDao.getCurrentDate());
+                t.setAmount(money);
                 t.setCustomer_id(customerId);
                 t.setFrom_id(account.getId());
                 t.setTo_id(account.getId());
-                t.setAmount(money);
                 t.setFee(0.00);
                 t.setCheck_number(null);
 

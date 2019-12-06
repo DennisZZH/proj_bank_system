@@ -58,9 +58,10 @@ public class DepositUI implements ActionListener {
             String result;
 
             App app = new App();
+            app.initializeSystem();
             result = app.deposit(account.getId(), money);
 
-            if(result.charAt(0) == 0){
+            if(result.charAt(0) == '0'){
                 JOptionPane.showMessageDialog(depositFrame,"Deposit succeed!");
             }else{
                 JOptionPane.showMessageDialog(depositFrame,"Deposit failed!");

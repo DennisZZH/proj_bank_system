@@ -93,35 +93,44 @@ public class MenuUI implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        String aid = JOptionPane.showInputDialog(new AccountSelectUI(cid));
-        if(aid == null)
-            return;
-        this.account= accountAction.queryAccountById(aid);
-        if(account.isClosed()==1){
-            JOptionPane.showMessageDialog(appFrame, "Sorry, this account is closed!");
+        if(!command.equals("Logout")){
+            String aid = JOptionPane.showInputDialog(new AccountSelectUI(cid));
+            if(aid == null)
+                return;
+            this.account= accountAction.queryAccountById(aid);
+            if(account.isClosed()==1){
+                JOptionPane.showMessageDialog(appFrame, "Sorry, this account is closed!");
+        }
+
         }else{
             switch(command) {
                 case "Logout":
-                    appFrame.setVisible(false);
+                    //appFrame.setVisible(false);
                     LoginUI renew = new LoginUI();
                     return;
                 case "Deposit":
                     DepositUI depositUI = new DepositUI(account,cid);
                     return;
                 case "Top Up":
+                    TopUpUI topUpUI = new TopUpUI(account, cid);
                     return;
                 case "Withdrawal":
                     WithDrawalUI withDrawalUI = new WithDrawalUI(account,cid);
                     return;
                 case "Purchase":
+                    PurchaseUI purchaseUI = new PurchaseUI(account, cid);
                     return;
                 case "Transfer":
+                    TransferUI transferUI = new TransferUI(account, cid);
                     return;
                 case "Collect":
+                    CollectUI collectUI = new CollectUI(account, cid);
                     return;
                 case "Wire":
+                    WireUI wireUI = new WireUI(account, cid);
                     return;
                 case "Pay Friend":
+                    PayFriendUI payFriendUI = new PayFriendUI(account, cid);
                     return;
 
             }

@@ -28,15 +28,20 @@ public class AccountDao {
         List<Map<String, Object>> accountList = dbExecutor.query(sql);
         if(accountList == null || accountList.size() == 0)
             return null;
+        System.out.println(accountList.size());
         Account[] accounts = new Account[accountList.size()];
         for (int i = 0; i < accounts.length; i++) {
+//                System.out.println((String) accountList.get(i).get("ACCOUNT_ID"));
+//                System.out.println(AccountType.translate((String) accountList.get(i).get("ACCOUNT_TYPE")));
+//                System.out.println(( (BigDecimal) accountList.get(i).get("BALANCE") ).doubleValue());
+//                System.out.println((String) accountList.get(i).get("PRIMARY_OWNER_ID"));
             Account account = new Account();
             account.setId((String) accountList.get(i).get("ACCOUNT_ID"));
             account.setType(AccountType.translate((String) accountList.get(i).get("ACCOUNT_TYPE")));
-            account.setBalance( ( (BigDecimal) accountList.get(0).get("BALANCE") ).doubleValue());
-            account.setPrimaryOwner((String) accountList.get(0).get("PRIMARY_OWNER_ID"));
-            account.setRate(( (BigDecimal) accountList.get(0).get("RATE") ).doubleValue());
-            account.setIsClosed(( (BigDecimal) accountList.get(0).get("ISCLOSED") ).intValue());
+            account.setBalance( ( (BigDecimal) accountList.get(i).get("BALANCE") ).doubleValue());
+            account.setPrimaryOwner((String) accountList.get(i).get("PRIMARY_OWNER_ID"));
+            account.setRate(( (BigDecimal) accountList.get(i).get("RATE") ).doubleValue());
+            account.setIsClosed(( (BigDecimal) accountList.get(i).get("ISCLOSED") ).intValue());
             account.setLinkedID((String) accountList.get(i).get("LINKED_ACCOUNT_ID"));
             account.setBranch_name((String) accountList.get(i).get("BRANCH_NAME"));
 

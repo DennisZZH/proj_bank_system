@@ -39,10 +39,10 @@ public class Main
 //			//test createTables						// PASS
 //			r = app.createTables();
 //			System.out.println(r);
-
-
+//
+//
 //			//test setDate							// PASS
-//			r = app.setDate(2011,3,1);
+//			r = app.setDate(2011,3,2);
 //			System.out.println(r);
 //
 //
@@ -65,7 +65,7 @@ public class Main
 //
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "29107", 3000.00, "209378521", "known", "known" );
 //			System.out.println( r );
-//
+
 //
 //
 //			//test createCustomer					// PASS
@@ -74,15 +74,15 @@ public class Main
 //
 //			r = app.createCustomer("17431","412231856","Cindy Laugher","7000 Hollister");
 //			System.out.println(r);
-//
-//
+
+
 //			//test createPocketAccount				// PASS
 //			r = app.createPocketAccount("53027","12121",500.00,"207843218");
 //			System.out.println(r);
 //
 //			r = app.createPocketAccount("43947","29107",500.00,"12116070");
 //			System.out.println(r);
-//
+
 //			//test deposit							// PASS
 //			r = app.showBalance("41725");
 //			System.out.println(r);

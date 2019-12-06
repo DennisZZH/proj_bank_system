@@ -1,6 +1,7 @@
 package cs174a;                                             // THE BASE PACKAGE FOR YOUR APP MUST BE THIS ONE.  But you may add subpackages.
 
 // You may have as many imports as you need.
+import java.math.BigDecimal;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -109,6 +110,7 @@ public class App implements Testable {
 	public String createTables() {
 		String r = "0";
 		Statement stmt = null;
+		PreparedStatement ps = null;
 
 		final String CREATE_TABLE_Customers = "CREATE TABLE Customers ("
 				+ "tax_id VARCHAR(20) PRIMARY KEY,"
@@ -156,12 +158,17 @@ public class App implements Testable {
 
 		final String CREATE_TABLE_Dates = "CREATE TABLE Dates ("
 				+ "id INTEGER PRIMARY KEY NOT NULL,"
-				+ "value DATE )";
+				+ "value Date)";
 
 		final String CREATE_TABLE_IDs = "CREATE TABLE IDs ("
 				+ "id INTEGER PRIMARY KEY NOT NULL,"
 				+ "value INTEGER )";
 		final String INIT_IDs = "INSERT INTO IDs VALUES(1, 10000)";
+
+		String initial_date_string = "2011-3-1";
+		Date initial_date = parseDate(initial_date_string);
+		final String INIT_Dates = "INSERT INTO Dates VALUES(?,?)";
+
 
 		try {
 			stmt = _connection.createStatement();
@@ -173,7 +180,10 @@ public class App implements Testable {
 			stmt.executeUpdate(CREATE_TABLE_Dates);
 			stmt.executeUpdate(CREATE_TABLE_IDs);
 			stmt.executeUpdate(INIT_IDs);
-			System.out.println("Tables created");
+			ps = _connection.prepareStatement(INIT_Dates);
+			ps.setInt(1, 1);
+			ps.setDate(2, new java.sql.Date(initial_date.getTime()));
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			r = "1";
@@ -201,29 +211,29 @@ public class App implements Testable {
 	public String setDate(int year, int month, int day) {
 		String r = "0 ";
 		PreparedStatement ps = null;
-		String date_str = Integer.toString(year) + '-' + Integer.toString(month) + '-' + Integer.toString(day);
+		String date_str = year + "-" + month + "-" + day;
+		System.out.println(date_str);
 		Date date = parseDate(date_str);
 
-		final String INSERT_INTO_System_Date = "INSERT INTO Dates "
-				+ "VALUES (?,?)";
-
-		try{
-			ps = _connection.prepareStatement(INSERT_INTO_System_Date);
-			ps.setInt(1, 1);
-			ps.setDate(2, new java.sql.Date(date.getTime()));
+		String update = "UPDATE Dates SET value = ? WHERE id = ?";
+		try {
+			ps = _connection.prepareStatement(update);
+			ps.setDate(1, new java.sql.Date(date.getTime()));
+			ps.setInt(2, 1);
 			ps.executeUpdate();
-			System.out.println("Date inserted: " + date_str);
 		}catch(SQLException e){
 			e.printStackTrace();
 			r = "1 ";
 		}finally {
-			try{
-				if(ps != null)
+			try {
+				if (ps != null)
 					ps.close();
-			}catch (Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
+				r = "1 ";
 			}
 		}
+
 		return r + date_str;
 	}
 
@@ -353,7 +363,6 @@ public class App implements Testable {
 		final String create_transation = "INSERT INTO Transactions "
 												+ "(transaction_id, transaction_type, time, amount, customer_id, from_id, to_id)"
 												+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
-		final String query_date = "SELECT * FROM Dates WHERE id = 1";
 
 		try{
 			stmt = _connection.createStatement();
@@ -380,9 +389,7 @@ public class App implements Testable {
 				int tran_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
-				result = stmt.executeQuery(query_date);
-				result.next();
-				Date curr_date = result.getDate("value");
+				Date curr_date = DateDao.getCurrentDate();
 
 				ps = _connection.prepareStatement(create_transation);
 				ps.setInt(1, tran_id);
@@ -501,10 +508,7 @@ public class App implements Testable {
 			int trans_id = IDCreator.getNextId();
 
 			// Fetch current date for the new transaction
-			final String query_date = "SELECT * FROM Dates WHERE id = 1";
-			result = stmt.executeQuery(query_date);
-			result.next();
-			Date curr_date = result.getDate("value");
+			Date curr_date = DateDao.getCurrentDate();
 
 			final String create_transation = "INSERT INTO Transactions "
 												+ "(transaction_id, transaction_type, time, amount)"
@@ -622,10 +626,7 @@ public class App implements Testable {
 				int trans_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
-				final String query_date = "SELECT * FROM Dates WHERE id = 1";
-				ResultSet result_date = stmt.executeQuery(query_date);
-				result_date.next();
-				Date curr_date = result_date.getDate("value");
+				Date curr_date = DateDao.getCurrentDate();
 
 				final String create_transation = "INSERT INTO Transactions "
 													+ "(transaction_id, transaction_type, time, amount)"
@@ -700,10 +701,7 @@ public class App implements Testable {
 				int trans_id = IDCreator.getNextId();
 
 				// Fetch current date for the new transaction
-				final String query_date = "SELECT * FROM Dates WHERE id = 1";
-				ResultSet result_date = stmt.executeQuery(query_date);
-				result_date.next();
-				Date curr_date = result_date.getDate("value");
+				Date curr_date = DateDao.getCurrentDate();
 
 				final String create_transation = "INSERT INTO Transactions "
 											+ "(transaction_id, transaction_type, time, amount, from_id, to_id)"

@@ -156,7 +156,7 @@ public class MainUI implements ActionListener {
         else if(e.getActionCommand().equals("Delete Transactions")){
             repaint(new DeleteTransactionsUI());
         }
-        else if(e.getActionCommand().equals("Add Time")){
+        else if(e.getActionCommand().equals("Set Time")){
             repaint(new SetDateUI());
         }
         else if(e.getActionCommand().equals("Back")){

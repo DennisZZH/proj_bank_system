@@ -28,8 +28,9 @@ public class AccountSelectUI extends JPanel{
         AccountDao accountDao = new AccountDao();
         // Get all accounts belong to current customer
         accounts = accountDao.queryAccountByCustomerId(taxId);
+//        System.out.println(accounts.length);
 
-        if(accounts != null && accounts.length != 0){
+        if(accounts != null && accounts.length != 0) {
             accountsPanel.add(new Label("Account Id"));
             accountsPanel.add(new Label("Account Type"));
             accountsPanel.add(new Label("Bank Branch Name"));
@@ -38,7 +39,7 @@ public class AccountSelectUI extends JPanel{
 
             int count = 0;
             for (int i = 0; i < accounts.length; i++) {
-               // if((accounts[i].getType() == AccountType.POCKET_ACCOUNT)){
+
 
                         count++;
                         accountsPanel.add(new Label(accounts[i].getId()));

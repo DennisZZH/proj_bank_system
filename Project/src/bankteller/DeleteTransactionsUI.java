@@ -1,10 +1,16 @@
 package bankteller;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import cs174a.TransactionDao;
 
-public class DeleteTransactionsUI  extends JPanel implements ActionListener {
-    @Override
-    public void actionPerformed(ActionEvent e) {}
+import javax.swing.*;
+
+public class DeleteTransactionsUI extends JPanel {
+    public DeleteTransactionsUI(){
+        int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
+        if(choice == 0){
+            TransactionDao transactionDao = new TransactionDao();
+            transactionDao.deleteAllTransactions();
+            JOptionPane.showMessageDialog(this, "Transaction is successfully deleted!");
+        }
+    }
 }

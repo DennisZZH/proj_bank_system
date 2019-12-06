@@ -1,5 +1,7 @@
-package AppUI;
+package atm;
 
+import cs174a.AccountDao;
+import cs174a.App;
 import model.Account;
 
 import javax.swing.*;
@@ -63,6 +65,25 @@ public class PayFriendUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        if(e.getActionCommand().equals("Confirm")){
+            Double money = Double.parseDouble(amountText.getText());
+            String to = friendText.getText();
+            String from = account.getId();
+
+            App app = new App();
+            app.initializeSystem();
+            String res = app.payFriend(from, to, money);
+            String[] arr = res.split(" ");
+            if(arr[0].equals("1")){
+                JOptionPane.showMessageDialog(payFriendFrame, "Pay friend failed!");
+            }else if (arr[0].equals("0")){
+                JOptionPane.showMessageDialog(payFriendFrame, "Pay friend succeed! \n Your current balance: $" + arr[1]);
+                payFriendFrame.setVisible(false);
+            }
+
+
+        }
 
     }
 }

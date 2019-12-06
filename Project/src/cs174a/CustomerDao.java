@@ -50,7 +50,7 @@ public class CustomerDao {
     }
 
     public Customer[] queryCustomerByAccountId(String accountId){
-        String sql = "SELECT * FROM Customers WHERE tax_id in (SELECT Own.tax_id FROM Own WHERE account_id = " + accountId;
+        String sql = "SELECT * FROM Customers WHERE tax_id in (SELECT Own.tax_id FROM Own WHERE account_id = " + accountId + ")";
         return doQueryCustomersSQL(sql);
     }
 

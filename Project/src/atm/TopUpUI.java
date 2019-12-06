@@ -1,5 +1,7 @@
-package AppUI;
+package atm;
 
+import cs174a.AccountDao;
+import cs174a.App;
 import model.Account;
 
 import javax.swing.*;
@@ -48,6 +50,22 @@ public class TopUpUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Confirm")){
+            String result;
+            Double money = Double.parseDouble(amountText.getText());
+
+            App app = new App();
+            app.initializeSystem();
+            result = app.topUp(account.getId(),money);
+
+            if(result.charAt(0) == '0'){
+                JOptionPane.showMessageDialog(topupFrame,"Top up succeed!");
+            }else{
+                JOptionPane.showMessageDialog(topupFrame,"Top up failed!");
+            }
+
+            topupFrame.setVisible(false);
+        }
 
     }
 }
